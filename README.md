@@ -69,8 +69,8 @@ This is a Turborepo monorepo containing:
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
-   cd pastebin
+   git clone https://github.com/morganbarber/psti.io
+   cd psti.io
    ```
 
 2. **Install dependencies**
