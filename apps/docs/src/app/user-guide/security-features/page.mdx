@@ -1,0 +1,216 @@
+# Security Features
+
+SecurePaste is built with security as a top priority. Learn about the advanced security features available to protect your data.
+
+## End-to-End Encryption
+
+### What is Encryption?
+
+SecurePaste uses **AES-256-GCM** encryption to protect your sensitive pastes. When enabled, your paste content is encrypted before being sent to the server, and only you (or those with the decryption key) can read it.
+
+### How to Enable Encryption
+
+1. Create a new paste
+2. Check the **Encrypt this paste** option
+3. A random encryption key will be generated
+4. The key is appended to the URL as a fragment (after `#`)
+5. Share the complete URL (including the `#key` part)
+
+**Example encrypted paste URL:**
+```
+https://securepaste.com/abc123#encryption-key-here
+```
+
+### How It Works
+
+1. **Client-Side Encryption** - Content is encrypted in your browser before upload
+2. **Server Storage** - Only encrypted data is stored on the server
+3. **Client-Side Decryption** - Content is decrypted in the viewer's browser
+4. **Zero-Knowledge** - The server never sees your unencrypted content
+
+> **Important:** The encryption key is in the URL fragment (`#key`). If you lose the URL or the fragment, the paste cannot be decrypted.
+
+### Best Practices for Encrypted Pastes
+
+- ✅ Always copy the complete URL including the `#` fragment
+- ✅ Share encrypted paste URLs through secure channels
+- ✅ Consider using password protection in addition to encryption
+- ❌ Don't share encrypted paste URLs in public forums
+- ❌ Don't remove the `#key` part of the URL
+
+## Burn After Read
+
+### What is Burn After Read?
+
+Burn After Read is a feature that automatically deletes a paste after it has been viewed once. This ensures maximum privacy for one-time sensitive information sharing.
+
+### How to Enable
+
+1. Create a new paste
+2. Check the **Burn after read** option
+3. Create paste
+4. Share the URL
+
+> **Warning:** Once the paste is viewed, it is permanently deleted. Make sure the recipient saves the content if needed.
+
+### Use Cases
+
+- Sharing passwords or API keys
+- One-time secret messages
+- Temporary sensitive data sharing
+- Compliance with data retention policies
+
+### What Happens
+
+1. Paste is created and URL is generated
+2. First person to view the paste sees the content
+3. Immediately after viewing, the paste is deleted
+4. Subsequent visitors see a "Paste has been burned" message
+
+## Expiration Dates
+
+### Automatic Deletion
+
+Set pastes to automatically delete after a specified time:
+
+- **1 Hour** - For very temporary sharing
+- **1 Day** - For daily updates or temporary info
+- **1 Week** - For short-term projects
+- **1 Month** - For medium-term storage
+- **Custom** - Set any specific date/time
+
+### How to Set Expiration
+
+1. Create or edit a paste
+2. Select expiration time from dropdown
+3. Save paste
+
+### Expiration Notifications
+
+- You'll receive an email notification before paste expiration (if logged in)
+- Expired pastes are permanently deleted and cannot be recovered
+
+## Password Protection
+
+### Additional Layer of Security
+
+Even with encryption, you can add password protection:
+
+1. Enable encryption
+2. Enable password protection
+3. Set a strong password
+4. Share URL and password separately
+
+This provides **two layers of security**:
+- Encryption key in URL fragment
+- Password required to view
+
+## Rate Limiting
+
+### Protection Against Abuse
+
+SecurePaste implements rate limiting to prevent abuse:
+
+- **Anonymous users:** 10 pastes per hour
+- **Logged-in users:** 100 pastes per hour
+- **API requests:** Varies by endpoint (see [API Reference](/api-reference/rate-limiting))
+
+### What Happens When Limited
+
+If you exceed the rate limit:
+- You'll see an error message
+- Wait for the time window to reset
+- Consider creating an account for higher limits
+
+## Audit Logging
+
+### For Logged-In Users
+
+All actions on your account are logged:
+
+- Paste creation, editing, deletion
+- Login attempts
+- Password changes
+- API key generation
+
+### Viewing Audit Logs
+
+1. Go to **Profile** → **Security**
+2. Click **Audit Log**
+3. View all account activity
+
+## Security Headers
+
+SecurePaste implements industry-standard security headers:
+
+- **Content Security Policy (CSP)** - Prevents XSS attacks
+- **X-Frame-Options** - Prevents clickjacking
+- **Strict-Transport-Security** - Enforces HTTPS
+- **X-Content-Type-Options** - Prevents MIME sniffing
+
+## Input Sanitization
+
+All user input is sanitized to prevent:
+
+- Cross-Site Scripting (XSS)
+- SQL Injection
+- Code injection attacks
+
+## Row-Level Security
+
+Database access is protected with Row-Level Security (RLS) policies:
+
+- Users can only access their own private pastes
+- Automatic enforcement at the database level
+- Protection even if application logic fails
+
+## Best Practices
+
+### For Maximum Security
+
+1. ✅ Enable encryption for sensitive content
+2. ✅ Use password protection
+3. ✅ Set expiration dates
+4. ✅ Use burn after read for one-time secrets
+5. ✅ Use strong, unique passwords
+6. ✅ Share URLs and passwords through different channels
+7. ✅ Regularly review your audit logs
+
+### For Team Sharing
+
+1. ✅ Use unlisted pastes with password protection
+2. ✅ Set appropriate expiration dates
+3. ✅ Use folders to organize team pastes
+4. ✅ Regularly clean up old pastes
+
+### For Public Sharing
+
+1. ✅ Never include sensitive information in public pastes
+2. ✅ Use appropriate privacy levels
+3. ✅ Consider setting expiration dates
+4. ✅ Review content before making public
+
+## Security Incident Response
+
+If you believe your account has been compromised:
+
+1. **Immediately change your password**
+2. **Review your audit logs**
+3. **Delete any suspicious pastes**
+4. **Contact support** if needed
+
+## Reporting Security Issues
+
+Found a security vulnerability? Please report it responsibly:
+
+- **Do not** create a public paste or issue
+- Email: security@securepaste.com
+- Include proof of concept if possible
+- We'll respond within 48 hours
+
+See our [Security Policy](https://github.com/yourrepo/SECURITY.md) for more details.
+
+## Next Steps
+
+- Review [Privacy Settings](/user-guide/privacy-settings)
+- Learn about [API Authentication](/api-reference/authentication)

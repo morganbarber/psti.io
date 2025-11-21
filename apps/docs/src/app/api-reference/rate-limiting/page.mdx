@@ -1,0 +1,379 @@
+# Rate Limiting
+
+Understand SecurePaste's rate limiting policies and how to handle rate limits.
+
+## Overview
+
+SecurePaste implements rate limiting to prevent abuse and ensure fair usage for all users. Rate limits vary by endpoint and user type.
+
+## Rate Limit Tiers
+
+### Anonymous Users
+
+| Endpoint | Limit | Window |
+|----------|-------|--------|
+| Create Paste | 10 requests | 1 hour |
+| View Paste | 100 requests | 1 hour |
+| All Endpoints | 100 requests | 1 hour |
+
+### Authenticated Users
+
+| Endpoint | Limit | Window |
+|----------|-------|--------|
+| Create Paste | 100 requests | 1 hour |
+| Update/Delete Paste | 200 requests | 1 hour |
+| View Paste | 1000 requests | 1 hour |
+| All Endpoints | 1000 requests | 1 hour |
+
+### API Keys (Coming Soon)
+
+| Tier | Limit | Window |
+|------|-------|--------|
+| Free | 1,000 requests | 1 hour |
+| Pro | 10,000 requests | 1 hour |
+| Enterprise | Custom | Custom |
+
+## Rate Limit Headers
+
+Every API response includes rate limit information in the headers:
+
+```
+X-RateLimit-Limit: 100
+X-RateLimit-Remaining: 95
+X-RateLimit-Reset: 1640995200
+```
+
+**Headers:**
+
+| Header | Description |
+|--------|-------------|
+| `X-RateLimit-Limit` | Maximum requests allowed in the window |
+| `X-RateLimit-Remaining` | Requests remaining in current window |
+| `X-RateLimit-Reset` | Unix timestamp when the limit resets |
+
+## Rate Limit Response
+
+When you exceed the rate limit, you'll receive a `429 Too Many Requests` response:
+
+```json
+{
+  "success": false,
+  "error": {
+    "message": "Rate limit exceeded. Try again in 3600 seconds.",
+    "code": "RATE_LIMIT_EXCEEDED",
+    "retry_after": 3600
+  }
+}
+```
+
+**Additional Headers:**
+
+```
+Retry-After: 3600
+```
+
+## Handling Rate Limits
+
+### Check Headers
+
+Always check rate limit headers before making requests:
+
+```typescript
+const response = await fetch('https://api.securepaste.com/api/pastes');
+
+const limit = response.headers.get('X-RateLimit-Limit');
+const remaining = response.headers.get('X-RateLimit-Remaining');
+const reset = response.headers.get('X-RateLimit-Reset');
+
+console.log(`${remaining}/${limit} requests remaining`);
+console.log(`Resets at: ${new Date(parseInt(reset) * 1000)}`);
+```
+
+### Implement Backoff
+
+When rate limited, wait before retrying:
+
+```typescript
+async function makeRequest(url: string, options: RequestInit) {
+  const response = await fetch(url, options);
+  
+  if (response.status === 429) {
+    const retryAfter = response.headers.get('Retry-After');
+    const waitTime = parseInt(retryAfter || '60') * 1000;
+    
+    console.log(`Rate limited. Waiting ${waitTime}ms...`);
+    await new Promise(resolve => setTimeout(resolve, waitTime));
+    
+    // Retry request
+    return makeRequest(url, options);
+  }
+  
+  return response;
+}
+```
+
+### Exponential Backoff
+
+For multiple retries, use exponential backoff:
+
+```typescript
+async function makeRequestWithBackoff(
+  url: string,
+  options: RequestInit,
+  maxRetries = 3
+) {
+  for (let i = 0; i < maxRetries; i++) {
+    const response = await fetch(url, options);
+    
+    if (response.status !== 429) {
+      return response;
+    }
+    
+    // Exponential backoff: 2^i seconds
+    const waitTime = Math.pow(2, i) * 1000;
+    await new Promise(resolve => setTimeout(resolve, waitTime));
+  }
+  
+  throw new Error('Max retries exceeded');
+}
+```
+
+## Best Practices
+
+### 1. Cache Responses
+
+Cache paste content to reduce API calls:
+
+```typescript
+const cache = new Map();
+
+async function getPaste(id: string) {
+  if (cache.has(id)) {
+    return cache.get(id);
+  }
+  
+  const response = await fetch(`https://api.securepaste.com/api/pastes/${id}`);
+  const data = await response.json();
+  
+  cache.set(id, data);
+  return data;
+}
+```
+
+### 2. Batch Requests
+
+When possible, batch multiple operations:
+
+```typescript
+// Instead of multiple individual requests
+for (const id of pasteIds) {
+  await getPaste(id); // ❌ Multiple requests
+}
+
+// Use a single request with multiple IDs (if supported)
+const pastes = await getPastes(pasteIds); // ✅ Single request
+```
+
+### 3. Monitor Usage
+
+Track your rate limit usage:
+
+```typescript
+class RateLimitMonitor {
+  private remaining: number = 0;
+  private limit: number = 0;
+  private reset: number = 0;
+  
+  update(headers: Headers) {
+    this.remaining = parseInt(headers.get('X-RateLimit-Remaining') || '0');
+    this.limit = parseInt(headers.get('X-RateLimit-Limit') || '0');
+    this.reset = parseInt(headers.get('X-RateLimit-Reset') || '0');
+  }
+  
+  canMakeRequest(): boolean {
+    return this.remaining > 0;
+  }
+  
+  getUsagePercentage(): number {
+    return ((this.limit - this.remaining) / this.limit) * 100;
+  }
+}
+```
+
+### 4. Use Authentication
+
+Authenticated users have higher rate limits:
+
+```typescript
+// Anonymous: 10 pastes/hour
+await fetch('https://api.securepaste.com/api/pastes', {
+  method: 'POST',
+  body: JSON.stringify(paste),
+});
+
+// Authenticated: 100 pastes/hour
+await fetch('https://api.securepaste.com/api/pastes', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${token}`, // ✅ Higher limits
+  },
+  body: JSON.stringify(paste),
+});
+```
+
+## Rate Limit Bypass (Enterprise)
+
+Enterprise customers can request custom rate limits. Contact sales for details.
+
+## Code Examples
+
+### Complete Rate Limit Handler
+
+```typescript
+class APIClient {
+  private baseURL = 'https://api.securepaste.com';
+  private token?: string;
+  private rateLimitMonitor = new RateLimitMonitor();
+  
+  constructor(token?: string) {
+    this.token = token;
+  }
+  
+  async request(
+    endpoint: string,
+    options: RequestInit = {}
+  ): Promise<Response> {
+    // Check if we can make request
+    if (!this.rateLimitMonitor.canMakeRequest()) {
+      const resetTime = new Date(this.rateLimitMonitor.reset * 1000);
+      throw new Error(`Rate limited until ${resetTime}`);
+    }
+    
+    // Add auth header
+    const headers = new Headers(options.headers);
+    if (this.token) {
+      headers.set('Authorization', `Bearer ${this.token}`);
+    }
+    
+    // Make request
+    const response = await fetch(`${this.baseURL}${endpoint}`, {
+      ...options,
+      headers,
+    });
+    
+    // Update rate limit info
+    this.rateLimitMonitor.update(response.headers);
+    
+    // Handle rate limit
+    if (response.status === 429) {
+      const retryAfter = parseInt(
+        response.headers.get('Retry-After') || '60'
+      );
+      
+      await new Promise(resolve => 
+        setTimeout(resolve, retryAfter * 1000)
+      );
+      
+      return this.request(endpoint, options);
+    }
+    
+    return response;
+  }
+  
+  async createPaste(paste: any) {
+    return this.request('/api/pastes', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(paste),
+    });
+  }
+}
+
+// Usage
+const client = new APIClient(token);
+
+try {
+  const response = await client.createPaste({
+    content: 'Hello World',
+  });
+  console.log('Paste created!');
+} catch (error) {
+  console.error('Rate limited:', error.message);
+}
+```
+
+### Python Rate Limit Handler
+
+```python
+import time
+import requests
+from typing import Optional
+
+class APIClient:
+    def __init__(self, token: Optional[str] = None):
+        self.base_url = 'https://api.securepaste.com'
+        self.token = token
+        self.session = requests.Session()
+        
+        if token:
+            self.session.headers['Authorization'] = f'Bearer {token}'
+    
+    def request(self, method: str, endpoint: str, **kwargs):
+        url = f'{self.base_url}{endpoint}'
+        response = self.session.request(method, url, **kwargs)
+        
+        # Check rate limit
+        if response.status_code == 429:
+            retry_after = int(response.headers.get('Retry-After', 60))
+            print(f'Rate limited. Waiting {retry_after}s...')
+            time.sleep(retry_after)
+            return self.request(method, endpoint, **kwargs)
+        
+        return response
+    
+    def create_paste(self, paste: dict):
+        return self.request('POST', '/api/pastes', json=paste)
+
+# Usage
+client = APIClient(token)
+response = client.create_paste({'content': 'Hello World'})
+```
+
+## Monitoring Dashboard
+
+Track your API usage in the dashboard:
+
+1. Go to **Profile** → **API Usage**
+2. View current rate limit status
+3. See historical usage graphs
+4. Set up alerts for high usage
+
+## FAQs
+
+### Q: What happens if I exceed the rate limit?
+
+You'll receive a `429 Too Many Requests` response. Wait for the time specified in `Retry-After` header before making more requests.
+
+### Q: Do rate limits reset immediately?
+
+Rate limits use a sliding window. The limit resets gradually as old requests age out of the window.
+
+### Q: Can I increase my rate limit?
+
+Yes! Authenticated users have higher limits. Enterprise customers can request custom limits.
+
+### Q: Are rate limits per IP or per user?
+
+- **Anonymous:** Per IP address
+- **Authenticated:** Per user account
+- **API Keys:** Per API key
+
+### Q: Do failed requests count toward the limit?
+
+No, only successful requests (2xx status codes) count toward your rate limit.
+
+## Next Steps
+
+- [Authentication](/api-reference/authentication) - Get higher rate limits with authentication
+- [Pastes API](/api-reference/pastes) - Learn about paste endpoints
+- [Users API](/api-reference/users) - Manage your profile

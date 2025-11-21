@@ -1,0 +1,23 @@
+{
+    "name": "@repo/security",
+    "version": "0.0.0",
+    "private": true,
+    "main": "./src/index.ts",
+    "types": "./src/index.ts",
+    "scripts": {
+        "lint": "eslint . --max-warnings 0",
+        "type-check": "tsc --noEmit"
+    },
+    "dependencies": {
+        "@repo/config": "*",
+        "dompurify": "^3.2.2",
+        "isomorphic-dompurify": "^2.16.0"
+    },
+    "devDependencies": {
+        "@repo/eslint-config": "*",
+        "@types/dompurify": "^3.2.0",
+        "@types/node": "^22.10.1",
+        "eslint": "^9.16.0",
+        "typescript": "^5.7.2"
+    }
+}

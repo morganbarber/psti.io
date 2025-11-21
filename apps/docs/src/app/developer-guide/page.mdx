@@ -1,0 +1,100 @@
+# Developer Guide
+
+Welcome to the SecurePaste Developer Guide. This section provides technical documentation for developers who want to contribute to the project or understand its architecture.
+
+## Overview
+
+SecurePaste is built as a modern monorepo using:
+
+- **Turborepo** - Monorepo build system
+- **Next.js 16** - Frontend framework
+- **NestJS** - Backend API framework
+- **Supabase** - Database and authentication
+- **TypeScript** - Type-safe development
+
+## Quick Start
+
+```bash
+# Clone the repository
+git clone <repository-url>
+cd pastebin
+
+# Install dependencies
+npm install
+
+# Set up environment variables
+cp .env.example .env
+
+# Start development servers
+npm run dev
+```
+
+## Documentation Sections
+
+- [Setup](/developer-guide/setup) - Complete development environment setup
+- [Architecture](/developer-guide/architecture) - System architecture and design decisions
+- [Contributing](/developer-guide/contributing) - How to contribute to the project
+- [Testing](/developer-guide/testing) - Testing strategy and running tests
+
+## Repository Structure
+
+```
+pastebin/
+├── apps/
+│   ├── web/          # Next.js frontend
+│   ├── api/          # NestJS backend
+│   ├── raw/          # Raw paste viewer
+│   └── docs/         # Documentation site
+├── packages/
+│   ├── database/     # Supabase client
+│   ├── ui/           # Shared UI components
+│   ├── auth/         # Authentication utilities
+│   ├── validation/   # Zod schemas
+│   ├── security/     # Security utilities
+│   └── types/        # Shared TypeScript types
+└── turbo.json        # Turborepo configuration
+```
+
+## Technology Stack
+
+### Frontend
+- Next.js 16 with App Router
+- React 19
+- Tailwind CSS
+- shadcn/ui components
+- Monaco Editor
+
+### Backend
+- NestJS
+- Supabase (PostgreSQL)
+- JWT authentication
+- Rate limiting with Throttler
+
+### Security
+- Row-Level Security (RLS)
+- AES-256-GCM encryption
+- CSRF protection
+- Content Security Policy
+
+## Development Workflow
+
+1. **Create a branch** for your feature or fix
+2. **Make changes** following our code style
+3. **Write tests** for new functionality
+4. **Run linting** and tests locally
+5. **Submit a pull request** with clear description
+6. **Address review feedback**
+7. **Merge** after approval
+
+## Getting Help
+
+- Check the [Setup Guide](/developer-guide/setup) for environment issues
+- Review [Architecture](/developer-guide/architecture) for design questions
+- See [Contributing](/developer-guide/contributing) for process questions
+- Open an issue on GitHub for bugs or feature requests
+
+## Next Steps
+
+- [Set up your development environment](/developer-guide/setup)
+- [Understand the architecture](/developer-guide/architecture)
+- [Learn how to contribute](/developer-guide/contributing)

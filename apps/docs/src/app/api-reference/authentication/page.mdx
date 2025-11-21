@@ -1,0 +1,410 @@
+# Authentication
+
+Learn how to authenticate with the SecurePaste API.
+
+## Authentication Methods
+
+SecurePaste supports two authentication methods:
+
+1. **JWT Tokens** - For user authentication
+2. **API Keys** - For programmatic access (coming soon)
+
+## JWT Authentication
+
+### Login
+
+Obtain a JWT token by logging in:
+
+<div className="api-endpoint">
+  <span className="api-method post">POST</span>
+  <code>/auth/login</code>
+</div>
+
+**Request Body:**
+
+```json
+{
+  "email": "user@example.com",
+  "password": "your-password"
+}
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "user": {
+      "id": "user-id",
+      "email": "user@example.com",
+      "role": "user"
+    }
+  }
+}
+```
+
+**Example:**
+
+```bash
+curl -X POST https://api.securepaste.com/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "user@example.com",
+    "password": "your-password"
+  }'
+```
+
+### Using the Token
+
+Include the token in the `Authorization` header:
+
+```
+Authorization: Bearer YOUR_JWT_TOKEN
+```
+
+**Example:**
+
+```bash
+curl https://api.securepaste.com/auth/me \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+### Token Expiration
+
+- **Access tokens** expire after 24 hours
+- **Refresh tokens** expire after 30 days (coming soon)
+
+## Get Current User
+
+Retrieve information about the authenticated user:
+
+<div className="api-endpoint">
+  <span className="api-method get">GET</span>
+  <code>/auth/me</code>
+</div>
+
+**Headers:**
+
+```
+Authorization: Bearer YOUR_JWT_TOKEN
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "user-id",
+    "email": "user@example.com",
+    "role": "user",
+    "created_at": "2024-01-01T00:00:00Z"
+  }
+}
+```
+
+**Example:**
+
+```bash
+curl https://api.securepaste.com/auth/me \
+  -H "Authorization: Bearer YOUR_TOKEN"
+```
+
+## Register
+
+Create a new user account:
+
+<div className="api-endpoint">
+  <span className="api-method post">POST</span>
+  <code>/auth/register</code>
+</div>
+
+**Request Body:**
+
+```json
+{
+  "email": "newuser@example.com",
+  "password": "secure-password"
+}
+```
+
+**Password Requirements:**
+- Minimum 8 characters
+- At least one uppercase letter
+- At least one lowercase letter
+- At least one number
+- At least one special character
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "message": "Registration successful. Please verify your email."
+  }
+}
+```
+
+**Example:**
+
+```bash
+curl -X POST https://api.securepaste.com/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "newuser@example.com",
+    "password": "SecurePass123!"
+  }'
+```
+
+## Email Verification
+
+After registration, verify your email:
+
+<div className="api-endpoint">
+  <span className="api-method post">POST</span>
+  <code>/auth/verify-email</code>
+</div>
+
+**Request Body:**
+
+```json
+{
+  "token": "verification-token-from-email"
+}
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "message": "Email verified successfully"
+  }
+}
+```
+
+## Password Reset
+
+### Request Reset
+
+<div className="api-endpoint">
+  <span className="api-method post">POST</span>
+  <code>/auth/forgot-password</code>
+</div>
+
+**Request Body:**
+
+```json
+{
+  "email": "user@example.com"
+}
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "message": "Password reset email sent"
+  }
+}
+```
+
+### Reset Password
+
+<div className="api-endpoint">
+  <span className="api-method post">POST</span>
+  <code>/auth/reset-password</code>
+</div>
+
+**Request Body:**
+
+```json
+{
+  "token": "reset-token-from-email",
+  "password": "new-secure-password"
+}
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "message": "Password reset successful"
+  }
+}
+```
+
+## API Keys (Coming Soon)
+
+Generate API keys for programmatic access:
+
+<div className="api-endpoint">
+  <span className="api-method post">POST</span>
+  <code>/auth/api-keys</code>
+</div>
+
+**Request Body:**
+
+```json
+{
+  "name": "My API Key",
+  "scopes": ["pastes:read", "pastes:write"]
+}
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "key": "sp_live_abc123...",
+    "name": "My API Key",
+    "scopes": ["pastes:read", "pastes:write"],
+    "created_at": "2024-01-01T00:00:00Z"
+  }
+}
+```
+
+### Using API Keys
+
+```
+Authorization: Bearer sp_live_abc123...
+```
+
+## Error Responses
+
+### Invalid Credentials
+
+```json
+{
+  "success": false,
+  "error": {
+    "message": "Invalid email or password",
+    "code": "INVALID_CREDENTIALS"
+  }
+}
+```
+
+### Token Expired
+
+```json
+{
+  "success": false,
+  "error": {
+    "message": "Token has expired",
+    "code": "TOKEN_EXPIRED"
+  }
+}
+```
+
+### Invalid Token
+
+```json
+{
+  "success": false,
+  "error": {
+    "message": "Invalid token",
+    "code": "INVALID_TOKEN"
+  }
+}
+```
+
+## Security Best Practices
+
+### Token Storage
+
+- **Never** store tokens in localStorage (XSS vulnerable)
+- **Use** httpOnly cookies for web apps
+- **Use** secure storage for mobile apps
+
+### Token Transmission
+
+- **Always** use HTTPS
+- **Never** include tokens in URLs
+- **Use** Authorization header
+
+### Token Rotation
+
+- Implement token refresh
+- Rotate tokens regularly
+- Revoke compromised tokens immediately
+
+## Code Examples
+
+### JavaScript/TypeScript
+
+```typescript
+// Login
+const response = await fetch('https://api.securepaste.com/auth/login', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    email: 'user@example.com',
+    password: 'password',
+  }),
+});
+
+const { data } = await response.json();
+const token = data.token;
+
+// Use token
+const userResponse = await fetch('https://api.securepaste.com/auth/me', {
+  headers: {
+    'Authorization': `Bearer ${token}`,
+  },
+});
+```
+
+### Python
+
+```python
+import requests
+
+# Login
+response = requests.post(
+    'https://api.securepaste.com/auth/login',
+    json={
+        'email': 'user@example.com',
+        'password': 'password'
+    }
+)
+
+token = response.json()['data']['token']
+
+# Use token
+user_response = requests.get(
+    'https://api.securepaste.com/auth/me',
+    headers={'Authorization': f'Bearer {token}'}
+)
+```
+
+### cURL
+
+```bash
+# Login
+TOKEN=$(curl -X POST https://api.securepaste.com/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"user@example.com","password":"password"}' \
+  | jq -r '.data.token')
+
+# Use token
+curl https://api.securepaste.com/auth/me \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+## Next Steps
+
+- [Pastes API](/api-reference/pastes) - Create and manage pastes
+- [Users API](/api-reference/users) - Manage user profile
+- [Rate Limiting](/api-reference/rate-limiting) - Understand rate limits

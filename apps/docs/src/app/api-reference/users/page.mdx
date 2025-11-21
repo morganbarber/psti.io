@@ -1,0 +1,302 @@
+# Users API
+
+Manage user profiles and settings.
+
+## Get User Profile
+
+Retrieve the authenticated user's profile:
+
+<div className="api-endpoint">
+  <span className="api-method get">GET</span>
+  <code>/users/profile</code>
+</div>
+
+**Authentication:** Required
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "user-id",
+    "email": "user@example.com",
+    "role": "user",
+    "created_at": "2024-01-01T00:00:00Z",
+    "updated_at": "2024-01-01T00:00:00Z",
+    "stats": {
+      "total_pastes": 42,
+      "total_views": 1337,
+      "total_folders": 5
+    }
+  }
+}
+```
+
+**Example:**
+
+```bash
+curl https://api.securepaste.com/users/profile \
+  -H "Authorization: Bearer YOUR_TOKEN"
+```
+
+---
+
+## Update User Profile
+
+Update the authenticated user's profile:
+
+<div className="api-endpoint">
+  <span className="api-method patch">PATCH</span>
+  <code>/users/profile</code>
+</div>
+
+**Authentication:** Required
+
+**Request Body:**
+
+```json
+{
+  "email": "newemail@example.com",
+  "current_password": "current-password",
+  "new_password": "new-password"
+}
+```
+
+**Parameters:**
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `email` | string | No | New email address |
+| `current_password` | string | Conditional | Required when changing password |
+| `new_password` | string | No | New password |
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "user-id",
+    "email": "newemail@example.com",
+    "updated_at": "2024-01-02T00:00:00Z"
+  }
+}
+```
+
+**Example:**
+
+```bash
+# Update email
+curl -X PATCH https://api.securepaste.com/users/profile \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "newemail@example.com"
+  }'
+
+# Change password
+curl -X PATCH https://api.securepaste.com/users/profile \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "current_password": "old-password",
+    "new_password": "new-secure-password"
+  }'
+```
+
+---
+
+## Get User Statistics
+
+Get detailed statistics for the authenticated user:
+
+<div className="api-endpoint">
+  <span className="api-method get">GET</span>
+  <code>/users/stats</code>
+</div>
+
+**Authentication:** Required
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "pastes": {
+      "total": 42,
+      "public": 10,
+      "unlisted": 20,
+      "private": 12
+    },
+    "views": {
+      "total": 1337,
+      "last_30_days": 245
+    },
+    "folders": {
+      "total": 5
+    },
+    "storage": {
+      "used_bytes": 1048576,
+      "used_mb": 1.0,
+      "limit_mb": 100
+    }
+  }
+}
+```
+
+**Example:**
+
+```bash
+curl https://api.securepaste.com/users/stats \
+  -H "Authorization: Bearer YOUR_TOKEN"
+```
+
+---
+
+## Delete Account
+
+Permanently delete the authenticated user's account:
+
+<div className="api-endpoint">
+  <span className="api-method delete">DELETE</span>
+  <code>/users/account</code>
+</div>
+
+**Authentication:** Required
+
+**Request Body:**
+
+```json
+{
+  "password": "current-password",
+  "confirmation": "DELETE"
+}
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "message": "Account deleted successfully"
+}
+```
+
+**Example:**
+
+```bash
+curl -X DELETE https://api.securepaste.com/users/account \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "password": "current-password",
+    "confirmation": "DELETE"
+  }'
+```
+
+> **Warning:** This action is permanent and cannot be undone. All pastes and data will be deleted.
+
+---
+
+## Error Responses
+
+### Invalid Password
+
+```json
+{
+  "success": false,
+  "error": {
+    "message": "Invalid password",
+    "code": "INVALID_PASSWORD"
+  }
+}
+```
+
+### Email Already Exists
+
+```json
+{
+  "success": false,
+  "error": {
+    "message": "Email already in use",
+    "code": "EMAIL_EXISTS"
+  }
+}
+```
+
+## Code Examples
+
+### JavaScript/TypeScript
+
+```typescript
+// Get profile
+const profile = await fetch('https://api.securepaste.com/users/profile', {
+  headers: {
+    'Authorization': `Bearer ${token}`,
+  },
+});
+
+const { data } = await profile.json();
+console.log('User:', data.email);
+
+// Update profile
+await fetch('https://api.securepaste.com/users/profile', {
+  method: 'PATCH',
+  headers: {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    email: 'newemail@example.com',
+  }),
+});
+
+// Get stats
+const stats = await fetch('https://api.securepaste.com/users/stats', {
+  headers: {
+    'Authorization': `Bearer ${token}`,
+  },
+});
+
+const statsData = await stats.json();
+console.log('Total pastes:', statsData.data.pastes.total);
+```
+
+### Python
+
+```python
+import requests
+
+# Get profile
+response = requests.get(
+    'https://api.securepaste.com/users/profile',
+    headers={'Authorization': f'Bearer {token}'}
+)
+
+user = response.json()['data']
+print(f"User: {user['email']}")
+
+# Update profile
+requests.patch(
+    'https://api.securepaste.com/users/profile',
+    headers={'Authorization': f'Bearer {token}'},
+    json={'email': 'newemail@example.com'}
+)
+
+# Get stats
+stats_response = requests.get(
+    'https://api.securepaste.com/users/stats',
+    headers={'Authorization': f'Bearer {token}'}
+)
+
+stats = stats_response.json()['data']
+print(f"Total pastes: {stats['pastes']['total']}")
+```
+
+## Next Steps
+
+- [Authentication](/api-reference/authentication) - Learn about authentication
+- [Pastes API](/api-reference/pastes) - Create and manage pastes
+- [Rate Limiting](/api-reference/rate-limiting) - Understand rate limits

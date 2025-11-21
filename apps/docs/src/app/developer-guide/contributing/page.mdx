@@ -1,0 +1,338 @@
+# Contributing
+
+Thank you for your interest in contributing to SecurePaste! This guide will help you get started.
+
+## Code of Conduct
+
+Be respectful, inclusive, and professional. We're all here to build something great together.
+
+## How to Contribute
+
+### 1. Fork and Clone
+
+```bash
+# Fork the repository on GitHub
+# Then clone your fork
+git clone https://github.com/YOUR_USERNAME/pastebin.git
+cd pastebin
+```
+
+### 2. Create a Branch
+
+```bash
+# Create a feature branch
+git checkout -b feature/your-feature-name
+
+# Or a bugfix branch
+git checkout -b fix/bug-description
+```
+
+Branch naming conventions:
+- `feature/` - New features
+- `fix/` - Bug fixes
+- `docs/` - Documentation changes
+- `refactor/` - Code refactoring
+- `test/` - Test additions or changes
+
+### 3. Make Your Changes
+
+Follow our coding standards (see below) and make your changes.
+
+### 4. Test Your Changes
+
+```bash
+# Run linting
+npm run lint
+
+# Run type checking
+npm run type-check
+
+# Run tests
+npm run test
+
+# Test the build
+npm run build
+```
+
+### 5. Commit Your Changes
+
+Write clear, descriptive commit messages:
+
+```bash
+git commit -m "feat: add burn after read feature"
+git commit -m "fix: resolve paste deletion bug"
+git commit -m "docs: update API documentation"
+```
+
+We follow [Conventional Commits](https://www.conventionalcommits.org/):
+
+- `feat:` - New feature
+- `fix:` - Bug fix
+- `docs:` - Documentation changes
+- `style:` - Code style changes (formatting, etc.)
+- `refactor:` - Code refactoring
+- `test:` - Test changes
+- `chore:` - Build process or auxiliary tool changes
+
+### 6. Push and Create Pull Request
+
+```bash
+# Push to your fork
+git push origin feature/your-feature-name
+```
+
+Then create a Pull Request on GitHub.
+
+## Pull Request Guidelines
+
+### PR Title
+
+Use the same format as commit messages:
+
+```
+feat: add user profile page
+fix: resolve authentication bug
+docs: update setup guide
+```
+
+### PR Description
+
+Include:
+
+1. **What** - What does this PR do?
+2. **Why** - Why is this change needed?
+3. **How** - How does it work?
+4. **Testing** - How was it tested?
+5. **Screenshots** - For UI changes
+
+Use the PR template:
+
+```markdown
+## Description
+Brief description of changes
+
+## Type of Change
+- [ ] Bug fix
+- [ ] New feature
+- [ ] Breaking change
+- [ ] Documentation update
+
+## Testing
+- [ ] Tested locally
+- [ ] Added/updated tests
+- [ ] All tests pass
+
+## Screenshots (if applicable)
+```
+
+### PR Checklist
+
+Before submitting:
+
+- [ ] Code follows style guidelines
+- [ ] Self-reviewed code
+- [ ] Commented complex code
+- [ ] Updated documentation
+- [ ] No new warnings
+- [ ] Added tests
+- [ ] All tests pass
+- [ ] Updated CHANGELOG (if applicable)
+
+## Coding Standards
+
+### TypeScript
+
+- Use TypeScript for all new code
+- Define proper types (avoid `any`)
+- Use interfaces for object shapes
+- Export types from `@repo/types` package
+
+```typescript
+// Good
+interface CreatePasteDto {
+  title: string;
+  content: string;
+  language?: string;
+}
+
+// Avoid
+function createPaste(data: any) { }
+```
+
+### React/Next.js
+
+- Use functional components
+- Use hooks (useState, useEffect, etc.)
+- Prefer Server Components when possible
+- Use Client Components only when needed
+
+```typescript
+// Server Component (default)
+export default async function Page() {
+  const data = await fetchData();
+  return <div>{data}</div>;
+}
+
+// Client Component (when needed)
+'use client';
+export default function InteractiveComponent() {
+  const [state, setState] = useState();
+  return <button onClick={() => setState(...)}>Click</button>;
+}
+```
+
+### NestJS
+
+- Use dependency injection
+- Follow module structure
+- Use DTOs for validation
+- Use guards for authentication
+
+```typescript
+@Controller('pastes')
+export class PastesController {
+  constructor(private readonly pastesService: PastesService) {}
+  
+  @Post()
+  @UseGuards(AuthGuard)
+  async create(@Body() dto: CreatePasteDto) {
+    return this.pastesService.create(dto);
+  }
+}
+```
+
+### Styling
+
+- Use Tailwind CSS utility classes
+- Use shadcn/ui components when available
+- Follow existing design patterns
+- Ensure dark mode compatibility
+
+```tsx
+// Good
+<div className="flex items-center gap-4 p-4 bg-secondary rounded-lg">
+  <Button variant="primary">Submit</Button>
+</div>
+```
+
+### File Organization
+
+```
+src/
+├── app/              # Next.js app directory
+├── components/       # React components
+│   ├── ui/          # shadcn/ui components
+│   └── features/    # Feature-specific components
+├── lib/             # Utilities and helpers
+├── hooks/           # Custom React hooks
+└── types/           # TypeScript types
+```
+
+## Code Review Process
+
+1. **Automated Checks** - CI runs linting, type-checking, tests
+2. **Peer Review** - At least one maintainer reviews
+3. **Feedback** - Address review comments
+4. **Approval** - Maintainer approves PR
+5. **Merge** - Squash and merge to main
+
+## Testing Guidelines
+
+### Unit Tests
+
+Test individual functions and utilities:
+
+```typescript
+describe('encryptContent', () => {
+  it('should encrypt and decrypt content', () => {
+    const content = 'secret message';
+    const encrypted = encryptContent(content, key);
+    const decrypted = decryptContent(encrypted, key);
+    expect(decrypted).toBe(content);
+  });
+});
+```
+
+### Integration Tests
+
+Test API endpoints:
+
+```typescript
+describe('POST /api/pastes', () => {
+  it('should create a paste', async () => {
+    const response = await request(app)
+      .post('/api/pastes')
+      .send({ content: 'test' });
+    
+    expect(response.status).toBe(201);
+    expect(response.body.data).toHaveProperty('id');
+  });
+});
+```
+
+### E2E Tests
+
+Test user flows (future):
+
+```typescript
+test('user can create and view paste', async ({ page }) => {
+  await page.goto('/');
+  await page.click('text=New Paste');
+  await page.fill('textarea', 'test content');
+  await page.click('text=Create');
+  await expect(page).toHaveURL(/\/paste\/.+/);
+});
+```
+
+## Documentation
+
+### Code Comments
+
+- Comment complex logic
+- Use JSDoc for functions
+- Explain "why", not "what"
+
+```typescript
+/**
+ * Encrypts paste content using AES-256-GCM
+ * @param content - Plain text content to encrypt
+ * @param key - 32-byte encryption key
+ * @returns Encrypted content with IV prepended
+ */
+export function encryptContent(content: string, key: Buffer): string {
+  // Implementation
+}
+```
+
+### Documentation Updates
+
+When adding features:
+
+- Update relevant docs in `apps/docs`
+- Update README if needed
+- Update API docs for new endpoints
+- Add examples where helpful
+
+## Getting Help
+
+- **Questions?** Open a discussion on GitHub
+- **Bug?** Open an issue with reproduction steps
+- **Feature idea?** Open an issue for discussion first
+- **Stuck?** Ask in the PR comments
+
+## Recognition
+
+Contributors are recognized in:
+- GitHub contributors page
+- CHANGELOG for significant contributions
+- Special thanks in releases
+
+## License
+
+By contributing, you agree that your contributions will be licensed under the MIT License.
+
+## Next Steps
+
+- [Set up your development environment](/developer-guide/setup)
+- [Understand the architecture](/developer-guide/architecture)
+- [Explore the codebase](https://github.com/yourrepo)

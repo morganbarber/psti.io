@@ -1,0 +1,456 @@
+# Pastes API
+
+Complete reference for paste-related endpoints.
+
+## Create Paste
+
+Create a new paste:
+
+<div className="api-endpoint">
+  <span className="api-method post">POST</span>
+  <code>/api/pastes</code>
+</div>
+
+**Authentication:** Optional (required for private pastes)
+
+**Request Body:**
+
+```json
+{
+  "title": "My Paste",
+  "content": "console.log('Hello World');",
+  "language": "javascript",
+  "visibility": "public",
+  "password": "optional-password",
+  "encrypted": false,
+  "burn_after_read": false,
+  "expires_at": "2024-12-31T23:59:59Z",
+  "folder_id": "folder-id"
+}
+```
+
+**Parameters:**
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `title` | string | No | Paste title |
+| `content` | string | Yes | Paste content |
+| `language` | string | No | Syntax highlighting language |
+| `visibility` | string | No | `public`, `unlisted`, or `private` (default: `unlisted`) |
+| `password` | string | No | Password protection |
+| `encrypted` | boolean | No | Client-side encryption (default: `false`) |
+| `burn_after_read` | boolean | No | Delete after first view (default: `false`) |
+| `expires_at` | string | No | ISO 8601 expiration date |
+| `folder_id` | string | No | Folder to organize paste |
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "paste-id",
+    "title": "My Paste",
+    "content": "console.log('Hello World');",
+    "language": "javascript",
+    "visibility": "public",
+    "encrypted": false,
+    "burn_after_read": false,
+    "expires_at": null,
+    "user_id": null,
+    "folder_id": null,
+    "views": 0,
+    "created_at": "2024-01-01T00:00:00Z",
+    "updated_at": "2024-01-01T00:00:00Z",
+    "url": "https://securepaste.com/paste-id"
+  }
+}
+```
+
+**Example:**
+
+```bash
+curl -X POST https://api.securepaste.com/api/pastes \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Hello World",
+    "content": "console.log(\"Hello World\");",
+    "language": "javascript",
+    "visibility": "public"
+  }'
+```
+
+**Rate Limit:** 10 pastes per minute
+
+---
+
+## Get Paste
+
+Retrieve a paste by ID:
+
+<div className="api-endpoint">
+  <span className="api-method get">GET</span>
+  <code>/api/pastes/:id</code>
+</div>
+
+**Authentication:** Optional (required for private pastes)
+
+**URL Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `id` | string | Paste ID |
+
+**Query Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `password` | string | Password for protected pastes |
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "paste-id",
+    "title": "My Paste",
+    "content": "console.log('Hello World');",
+    "language": "javascript",
+    "visibility": "public",
+    "encrypted": false,
+    "burn_after_read": false,
+    "expires_at": null,
+    "views": 5,
+    "created_at": "2024-01-01T00:00:00Z",
+    "updated_at": "2024-01-01T00:00:00Z"
+  }
+}
+```
+
+**Example:**
+
+```bash
+# Public paste
+curl https://api.securepaste.com/api/pastes/paste-id
+
+# Password-protected paste
+curl "https://api.securepaste.com/api/pastes/paste-id?password=secret"
+
+# Private paste (requires auth)
+curl https://api.securepaste.com/api/pastes/paste-id \
+  -H "Authorization: Bearer YOUR_TOKEN"
+```
+
+**Special Cases:**
+
+- **Burn After Read:** Paste is deleted after first view
+- **Expired:** Returns 404 if paste has expired
+- **Password Protected:** Returns 401 if password is incorrect
+
+---
+
+## List User Pastes
+
+Get all pastes for the authenticated user:
+
+<div className="api-endpoint">
+  <span className="api-method get">GET</span>
+  <code>/api/pastes</code>
+</div>
+
+**Authentication:** Required
+
+**Query Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `page` | number | Page number (default: 1) |
+| `limit` | number | Items per page (default: 20, max: 100) |
+| `folder_id` | string | Filter by folder |
+| `search` | string | Search in title and content |
+| `language` | string | Filter by language |
+| `visibility` | string | Filter by visibility |
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "pastes": [
+      {
+        "id": "paste-1",
+        "title": "Paste 1",
+        "content": "...",
+        "created_at": "2024-01-01T00:00:00Z"
+      }
+    ],
+    "pagination": {
+      "page": 1,
+      "limit": 20,
+      "total": 45,
+      "pages": 3
+    }
+  }
+}
+```
+
+**Example:**
+
+```bash
+# Get all pastes
+curl https://api.securepaste.com/api/pastes \
+  -H "Authorization: Bearer YOUR_TOKEN"
+
+# Search pastes
+curl "https://api.securepaste.com/api/pastes?search=javascript&page=1&limit=10" \
+  -H "Authorization: Bearer YOUR_TOKEN"
+
+# Filter by folder
+curl "https://api.securepaste.com/api/pastes?folder_id=folder-123" \
+  -H "Authorization: Bearer YOUR_TOKEN"
+```
+
+---
+
+## Update Paste
+
+Update an existing paste:
+
+<div className="api-endpoint">
+  <span className="api-method patch">PATCH</span>
+  <code>/api/pastes/:id</code>
+</div>
+
+**Authentication:** Required (must be paste owner)
+
+**URL Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `id` | string | Paste ID |
+
+**Request Body:**
+
+```json
+{
+  "title": "Updated Title",
+  "content": "Updated content",
+  "language": "python",
+  "visibility": "private"
+}
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "paste-id",
+    "title": "Updated Title",
+    "content": "Updated content",
+    "language": "python",
+    "visibility": "private",
+    "updated_at": "2024-01-02T00:00:00Z"
+  }
+}
+```
+
+**Example:**
+
+```bash
+curl -X PATCH https://api.securepaste.com/api/pastes/paste-id \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Updated Title",
+    "visibility": "private"
+  }'
+```
+
+---
+
+## Delete Paste
+
+Delete a paste:
+
+<div className="api-endpoint">
+  <span className="api-method delete">DELETE</span>
+  <code>/api/pastes/:id</code>
+</div>
+
+**Authentication:** Required (must be paste owner)
+
+**URL Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `id` | string | Paste ID |
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "message": "Paste deleted successfully"
+}
+```
+
+**Example:**
+
+```bash
+curl -X DELETE https://api.securepaste.com/api/pastes/paste-id \
+  -H "Authorization: Bearer YOUR_TOKEN"
+```
+
+---
+
+## Error Responses
+
+### Paste Not Found
+
+```json
+{
+  "success": false,
+  "error": {
+    "message": "Paste not found",
+    "code": "PASTE_NOT_FOUND"
+  }
+}
+```
+
+### Unauthorized
+
+```json
+{
+  "success": false,
+  "error": {
+    "message": "You do not have permission to access this paste",
+    "code": "UNAUTHORIZED"
+  }
+}
+```
+
+### Password Required
+
+```json
+{
+  "success": false,
+  "error": {
+    "message": "Password required",
+    "code": "PASSWORD_REQUIRED"
+  }
+}
+```
+
+### Paste Expired
+
+```json
+{
+  "success": false,
+  "error": {
+    "message": "Paste has expired",
+    "code": "PASTE_EXPIRED"
+  }
+}
+```
+
+### Paste Burned
+
+```json
+{
+  "success": false,
+  "error": {
+    "message": "Paste has been burned after reading",
+    "code": "PASTE_BURNED"
+  }
+}
+```
+
+## Code Examples
+
+### JavaScript/TypeScript
+
+```typescript
+// Create paste
+const paste = await fetch('https://api.securepaste.com/api/pastes', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    title: 'My Paste',
+    content: 'console.log("Hello");',
+    language: 'javascript',
+  }),
+});
+
+const { data } = await paste.json();
+console.log('Paste URL:', data.url);
+
+// Get paste
+const response = await fetch(`https://api.securepaste.com/api/pastes/${data.id}`);
+const pasteData = await response.json();
+
+// Update paste
+await fetch(`https://api.securepaste.com/api/pastes/${data.id}`, {
+  method: 'PATCH',
+  headers: {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    title: 'Updated Title',
+  }),
+});
+
+// Delete paste
+await fetch(`https://api.securepaste.com/api/pastes/${data.id}`, {
+  method: 'DELETE',
+  headers: {
+    'Authorization': `Bearer ${token}`,
+  },
+});
+```
+
+### Python
+
+```python
+import requests
+
+# Create paste
+response = requests.post(
+    'https://api.securepaste.com/api/pastes',
+    json={
+        'title': 'My Paste',
+        'content': 'print("Hello")',
+        'language': 'python'
+    }
+)
+
+paste_id = response.json()['data']['id']
+
+# Get paste
+paste = requests.get(f'https://api.securepaste.com/api/pastes/{paste_id}')
+
+# Update paste
+requests.patch(
+    f'https://api.securepaste.com/api/pastes/{paste_id}',
+    headers={'Authorization': f'Bearer {token}'},
+    json={'title': 'Updated Title'}
+)
+
+# Delete paste
+requests.delete(
+    f'https://api.securepaste.com/api/pastes/{paste_id}',
+    headers={'Authorization': f'Bearer {token}'}
+)
+```
+
+## Next Steps
+
+- [Authentication](/api-reference/authentication) - Learn about authentication
+- [Users API](/api-reference/users) - Manage user profile
+- [Rate Limiting](/api-reference/rate-limiting) - Understand rate limits

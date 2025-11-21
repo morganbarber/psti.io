@@ -1,0 +1,114 @@
+# API Reference
+
+Welcome to the SecurePaste API documentation. This reference provides detailed information about all available API endpoints.
+
+## Base URL
+
+```
+https://api.securepaste.com
+```
+
+For local development:
+```
+http://localhost:3001
+```
+
+## Authentication
+
+Most endpoints require authentication. See [Authentication](/api-reference/authentication) for details.
+
+## Response Format
+
+All API responses follow this format:
+
+```json
+{
+  "success": true,
+  "data": { ... }
+}
+```
+
+Error responses:
+
+```json
+{
+  "success": false,
+  "error": {
+    "message": "Error description",
+    "code": "ERROR_CODE"
+  }
+}
+```
+
+## HTTP Status Codes
+
+| Code | Meaning |
+|------|---------|
+| 200 | Success |
+| 201 | Created |
+| 400 | Bad Request - Invalid input |
+| 401 | Unauthorized - Authentication required |
+| 403 | Forbidden - Insufficient permissions |
+| 404 | Not Found |
+| 429 | Too Many Requests - Rate limit exceeded |
+| 500 | Internal Server Error |
+
+## Rate Limiting
+
+All endpoints are rate-limited. See [Rate Limiting](/api-reference/rate-limiting) for details.
+
+## Endpoints Overview
+
+### Authentication
+- `GET /auth/me` - Get current user
+
+### Pastes
+- `POST /api/pastes` - Create paste
+- `GET /api/pastes` - List user's pastes
+- `GET /api/pastes/:id` - Get paste
+- `PATCH /api/pastes/:id` - Update paste
+- `DELETE /api/pastes/:id` - Delete paste
+
+### Users
+- `GET /users/profile` - Get user profile
+- `PATCH /users/profile` - Update profile
+
+## Quick Start
+
+### 1. Get an API Key
+
+```bash
+# Login to get JWT token
+curl -X POST https://api.securepaste.com/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email": "user@example.com", "password": "password"}'
+```
+
+### 2. Make a Request
+
+```bash
+# Create a paste
+curl -X POST https://api.securepaste.com/api/pastes \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "My Paste",
+    "content": "console.log(\"Hello World\");",
+    "language": "javascript"
+  }'
+```
+
+## SDKs and Libraries
+
+Official SDKs coming soon:
+- JavaScript/TypeScript
+- Python
+- Go
+- Ruby
+
+## Next Steps
+
+- [Authentication](/api-reference/authentication) - Learn about authentication
+- [Pastes](/api-reference/pastes) - Paste endpoints
+- [Users](/api-reference/users) - User endpoints
+- [Rate Limiting](/api-reference/rate-limiting) - Rate limit details

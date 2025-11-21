@@ -1,0 +1,482 @@
+# Testing
+
+Learn about SecurePaste's testing strategy and how to write and run tests.
+
+## Testing Philosophy
+
+We believe in:
+- **Test-Driven Development** - Write tests before or alongside code
+- **Comprehensive Coverage** - Test critical paths and edge cases
+- **Fast Feedback** - Tests should run quickly
+- **Reliable Tests** - No flaky tests
+
+## Test Types
+
+### Unit Tests
+
+Test individual functions and utilities in isolation.
+
+**Location:** `*.test.ts` or `*.spec.ts` files next to source code
+
+**Example:**
+
+```typescript
+// lib/encryption.test.ts
+import { encryptContent, decryptContent } from './encryption';
+
+describe('Encryption', () => {
+  const key = Buffer.from('a'.repeat(64), 'hex');
+  
+  it('should encrypt and decrypt content', () => {
+    const content = 'secret message';
+    const encrypted = encryptContent(content, key);
+    expect(encrypted).not.toBe(content);
+    
+    const decrypted = decryptContent(encrypted, key);
+    expect(decrypted).toBe(content);
+  });
+  
+  it('should throw error with invalid key', () => {
+    const content = 'test';
+    const invalidKey = Buffer.from('short');
+    
+    expect(() => {
+      encryptContent(content, invalidKey);
+    }).toThrow();
+  });
+});
+```
+
+### Integration Tests
+
+Test API endpoints and database operations.
+
+**Location:** `test/integration/` directory
+
+**Example:**
+
+```typescript
+// apps/api/test/integration/pastes.test.ts
+import { Test } from '@nestjs/testing';
+import { INestApplication } from '@nestjs/common';
+import * as request from 'supertest';
+import { AppModule } from '../../src/app.module';
+
+describe('Pastes API', () => {
+  let app: INestApplication;
+  let authToken: string;
+  
+  beforeAll(async () => {
+    const moduleRef = await Test.createTestingModule({
+      imports: [AppModule],
+    }).compile();
+    
+    app = moduleRef.createNestApplication();
+    await app.init();
+    
+    // Get auth token
+    const response = await request(app.getHttpServer())
+      .post('/auth/login')
+      .send({ email: 'test@example.com', password: 'password' });
+    
+    authToken = response.body.data.token;
+  });
+  
+  afterAll(async () => {
+    await app.close();
+  });
+  
+  describe('POST /api/pastes', () => {
+    it('should create a paste', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/api/pastes')
+        .set('Authorization', `Bearer ${authToken}`)
+        .send({
+          title: 'Test Paste',
+          content: 'Test content',
+          language: 'javascript',
+        });
+      
+      expect(response.status).toBe(201);
+      expect(response.body.success).toBe(true);
+      expect(response.body.data).toHaveProperty('id');
+    });
+    
+    it('should validate required fields', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/api/pastes')
+        .set('Authorization', `Bearer ${authToken}`)
+        .send({});
+      
+      expect(response.status).toBe(400);
+    });
+  });
+  
+  describe('GET /api/pastes/:id', () => {
+    it('should retrieve a paste', async () => {
+      // Create paste first
+      const createResponse = await request(app.getHttpServer())
+        .post('/api/pastes')
+        .send({ content: 'test' });
+      
+      const pasteId = createResponse.body.data.id;
+      
+      // Retrieve paste
+      const response = await request(app.getHttpServer())
+        .get(`/api/pastes/${pasteId}`);
+      
+      expect(response.status).toBe(200);
+      expect(response.body.data.content).toBe('test');
+    });
+    
+    it('should return 404 for non-existent paste', async () => {
+      const response = await request(app.getHttpServer())
+        .get('/api/pastes/non-existent-id');
+      
+      expect(response.status).toBe(404);
+    });
+  });
+});
+```
+
+### E2E Tests (Future)
+
+Test complete user flows using Playwright or Cypress.
+
+**Example:**
+
+```typescript
+// e2e/paste-creation.spec.ts
+import { test, expect } from '@playwright/test';
+
+test('user can create and view paste', async ({ page }) => {
+  // Navigate to home
+  await page.goto('http://localhost:3000');
+  
+  // Click new paste
+  await page.click('text=New Paste');
+  
+  // Fill in content
+  await page.fill('[data-testid="paste-editor"]', 'console.log("Hello");');
+  
+  // Select language
+  await page.selectOption('[data-testid="language-select"]', 'javascript');
+  
+  // Create paste
+  await page.click('text=Create Paste');
+  
+  // Verify redirect to paste page
+  await expect(page).toHaveURL(/\/paste\/.+/);
+  
+  // Verify content is displayed
+  await expect(page.locator('[data-testid="paste-content"]'))
+    .toContainText('console.log("Hello");');
+});
+
+test('user can delete paste', async ({ page }) => {
+  // Create paste first
+  await page.goto('http://localhost:3000/new');
+  await page.fill('[data-testid="paste-editor"]', 'test');
+  await page.click('text=Create Paste');
+  
+  // Delete paste
+  await page.click('[data-testid="delete-button"]');
+  await page.click('text=Confirm');
+  
+  // Verify redirect
+  await expect(page).toHaveURL('http://localhost:3000');
+});
+```
+
+## Running Tests
+
+### All Tests
+
+```bash
+# Run all tests
+npm run test
+
+# Run tests in watch mode
+npm run test:watch
+
+# Run tests with coverage
+npm run test:coverage
+```
+
+### Specific Tests
+
+```bash
+# Run tests in a specific file
+npm run test -- encryption.test.ts
+
+# Run tests matching a pattern
+npm run test -- --testNamePattern="should encrypt"
+
+# Run tests in a specific package
+npm run test --filter=@repo/security
+```
+
+### Integration Tests
+
+```bash
+# Run integration tests
+npm run test:integration
+
+# Run specific integration test
+npm run test:integration -- pastes.test.ts
+```
+
+### E2E Tests (Future)
+
+```bash
+# Run E2E tests
+npm run test:e2e
+
+# Run E2E tests in headed mode
+npm run test:e2e -- --headed
+
+# Run specific E2E test
+npm run test:e2e -- paste-creation.spec.ts
+```
+
+## Test Coverage
+
+### Viewing Coverage
+
+```bash
+# Generate coverage report
+npm run test:coverage
+
+# Open coverage report in browser
+open coverage/lcov-report/index.html
+```
+
+### Coverage Goals
+
+- **Overall:** 80%+
+- **Critical paths:** 95%+
+- **Utilities:** 90%+
+- **UI components:** 70%+
+
+## Writing Good Tests
+
+### Test Structure
+
+Follow the **Arrange-Act-Assert** pattern:
+
+```typescript
+it('should do something', () => {
+  // Arrange - Set up test data
+  const input = 'test';
+  const expected = 'TEST';
+  
+  // Act - Execute the function
+  const result = toUpperCase(input);
+  
+  // Assert - Verify the result
+  expect(result).toBe(expected);
+});
+```
+
+### Test Naming
+
+Use descriptive test names:
+
+```typescript
+// Good
+it('should return 404 when paste does not exist', () => {});
+it('should encrypt content with AES-256-GCM', () => {});
+it('should validate email format', () => {});
+
+// Avoid
+it('works', () => {});
+it('test 1', () => {});
+```
+
+### Test Independence
+
+Each test should be independent:
+
+```typescript
+// Good - Each test is independent
+describe('PasteService', () => {
+  let service: PasteService;
+  
+  beforeEach(() => {
+    service = new PasteService();
+  });
+  
+  it('should create paste', () => {
+    const paste = service.create({ content: 'test' });
+    expect(paste).toBeDefined();
+  });
+  
+  it('should delete paste', () => {
+    const paste = service.create({ content: 'test' });
+    service.delete(paste.id);
+    expect(service.find(paste.id)).toBeNull();
+  });
+});
+
+// Avoid - Tests depend on each other
+describe('PasteService', () => {
+  let pasteId: string;
+  
+  it('should create paste', () => {
+    const paste = service.create({ content: 'test' });
+    pasteId = paste.id; // ❌ Shared state
+  });
+  
+  it('should delete paste', () => {
+    service.delete(pasteId); // ❌ Depends on previous test
+  });
+});
+```
+
+### Mocking
+
+Use mocks for external dependencies:
+
+```typescript
+import { jest } from '@jest/globals';
+
+describe('PasteService', () => {
+  it('should call database', async () => {
+    const mockDb = {
+      insert: jest.fn().mockResolvedValue({ id: '123' }),
+    };
+    
+    const service = new PasteService(mockDb);
+    await service.create({ content: 'test' });
+    
+    expect(mockDb.insert).toHaveBeenCalledWith({
+      content: 'test',
+    });
+  });
+});
+```
+
+## Testing Best Practices
+
+### Do's
+
+- ✅ Write tests for new features
+- ✅ Test edge cases and error conditions
+- ✅ Keep tests simple and focused
+- ✅ Use descriptive test names
+- ✅ Mock external dependencies
+- ✅ Clean up after tests (database, files, etc.)
+
+### Don'ts
+
+- ❌ Don't test implementation details
+- ❌ Don't write flaky tests
+- ❌ Don't skip tests
+- ❌ Don't test third-party libraries
+- ❌ Don't share state between tests
+
+## Continuous Integration
+
+Tests run automatically on:
+
+- **Pull Requests** - All tests must pass
+- **Main branch** - After merge
+- **Nightly builds** - Full test suite
+
+### CI Configuration
+
+```yaml
+# .github/workflows/test.yml
+name: Tests
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20
+      - run: npm install
+      - run: npm run lint
+      - run: npm run type-check
+      - run: npm run test:coverage
+      - uses: codecov/codecov-action@v3
+```
+
+## Debugging Tests
+
+### VS Code
+
+Add to `.vscode/launch.json`:
+
+```json
+{
+  "type": "node",
+  "request": "launch",
+  "name": "Jest Debug",
+  "program": "${workspaceFolder}/node_modules/.bin/jest",
+  "args": ["--runInBand", "${file}"],
+  "console": "integratedTerminal",
+  "internalConsoleOptions": "neverOpen"
+}
+```
+
+### Command Line
+
+```bash
+# Run with debugger
+node --inspect-brk node_modules/.bin/jest --runInBand
+
+# Then open chrome://inspect in Chrome
+```
+
+## Test Data
+
+### Factories
+
+Create test data factories:
+
+```typescript
+// test/factories/paste.factory.ts
+export function createPaste(overrides = {}) {
+  return {
+    id: 'test-id',
+    title: 'Test Paste',
+    content: 'Test content',
+    language: 'javascript',
+    visibility: 'public',
+    created_at: new Date(),
+    ...overrides,
+  };
+}
+
+// Usage
+const paste = createPaste({ title: 'Custom Title' });
+```
+
+### Fixtures
+
+Use fixtures for complex test data:
+
+```typescript
+// test/fixtures/pastes.json
+[
+  {
+    "id": "paste-1",
+    "title": "Example Paste",
+    "content": "console.log('test');"
+  }
+]
+
+// Usage
+import pastes from './fixtures/pastes.json';
+```
+
+## Next Steps
+
+- [Set up your environment](/developer-guide/setup)
+- [Learn the architecture](/developer-guide/architecture)
+- [Start contributing](/developer-guide/contributing)

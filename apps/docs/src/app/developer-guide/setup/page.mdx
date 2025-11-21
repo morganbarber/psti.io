@@ -1,0 +1,274 @@
+# Development Setup
+
+This guide will help you set up your local development environment for SecurePaste.
+
+## Prerequisites
+
+Before you begin, ensure you have the following installed:
+
+- **Node.js** 20+ ([Download](https://nodejs.org/))
+- **npm** 10+ (comes with Node.js)
+- **Git** ([Download](https://git-scm.com/))
+- **Supabase Account** ([Sign up](https://supabase.com/))
+
+Optional but recommended:
+- **VS Code** with recommended extensions
+- **Docker** (for local Supabase instance)
+
+## Step 1: Clone the Repository
+
+```bash
+git clone <repository-url>
+cd pastebin
+```
+
+## Step 2: Install Dependencies
+
+```bash
+npm install
+```
+
+This will install all dependencies for all apps and packages in the monorepo.
+
+## Step 3: Set Up Supabase
+
+### Option A: Use Supabase Cloud
+
+1. Create a new project at [supabase.com](https://supabase.com/)
+2. Go to **Project Settings** → **API**
+3. Copy your project URL and anon key
+
+### Option B: Run Supabase Locally
+
+```bash
+# Install Supabase CLI
+npm install -g supabase
+
+# Start local Supabase
+supabase start
+```
+
+## Step 4: Configure Environment Variables
+
+Copy the example environment file:
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` with your Supabase credentials:
+
+```bash
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=your-project-url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+
+# API
+API_URL=http://localhost:3001
+NEXT_PUBLIC_API_URL=http://localhost:3001
+
+# Security
+JWT_SECRET=your-random-secret-key
+ENCRYPTION_KEY=your-encryption-key
+```
+
+### Generating Secrets
+
+```bash
+# Generate JWT secret
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+
+# Generate encryption key
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+```
+
+## Step 5: Set Up Database
+
+### Run Migrations
+
+```bash
+cd packages/database
+npx supabase db push
+```
+
+### Seed Database (Optional)
+
+```bash
+npx supabase db seed
+```
+
+## Step 6: Start Development Servers
+
+From the root directory:
+
+```bash
+npm run dev
+```
+
+This will start all applications:
+
+- **Web App:** http://localhost:3000
+- **API:** http://localhost:3001
+- **Raw Viewer:** http://localhost:3002
+- **Docs:** http://localhost:3003
+
+### Start Individual Apps
+
+```bash
+# Web app only
+npm run dev --filter=web
+
+# API only
+npm run dev --filter=api
+
+# Raw viewer only
+npm run dev --filter=raw
+
+# Docs only
+npm run dev --filter=docs
+```
+
+## Step 7: Verify Setup
+
+1. Open http://localhost:3000
+2. Create a test account
+3. Create a test paste
+4. Verify you can view, edit, and delete the paste
+
+## IDE Setup
+
+### VS Code
+
+Install recommended extensions:
+
+1. Open the project in VS Code
+2. When prompted, install recommended extensions
+3. Or manually install:
+   - ESLint
+   - Prettier
+   - Tailwind CSS IntelliSense
+   - TypeScript and JavaScript Language Features
+
+### Settings
+
+Create `.vscode/settings.json`:
+
+```json
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "typescript.tsdk": "node_modules/typescript/lib"
+}
+```
+
+## Troubleshooting
+
+### Port Already in Use
+
+If ports 3000-3003 are in use:
+
+```bash
+# Find process using port
+lsof -i :3000
+
+# Kill process
+kill -9 <PID>
+```
+
+Or change ports in package.json dev scripts.
+
+### Module Not Found
+
+```bash
+# Clear node_modules and reinstall
+rm -rf node_modules
+npm install
+```
+
+### Supabase Connection Issues
+
+1. Verify your `.env` file has correct credentials
+2. Check Supabase project is running
+3. Verify network connectivity
+4. Check Supabase dashboard for errors
+
+### Build Errors
+
+```bash
+# Clean build cache
+npm run clean
+
+# Rebuild
+npm run build
+```
+
+## Development Tools
+
+### Linting
+
+```bash
+# Run ESLint
+npm run lint
+
+# Fix auto-fixable issues
+npm run lint:fix
+```
+
+### Type Checking
+
+```bash
+# Check types across all packages
+npm run type-check
+```
+
+### Formatting
+
+```bash
+# Format all files with Prettier
+npm run format
+```
+
+## Database Management
+
+### View Database
+
+Access Supabase Studio:
+- **Cloud:** https://app.supabase.com/project/your-project-id
+- **Local:** http://localhost:54323
+
+### Create Migration
+
+```bash
+cd packages/database
+npx supabase migration new migration_name
+```
+
+### Reset Database
+
+```bash
+npx supabase db reset
+```
+
+> **Warning:** This will delete all data!
+
+## Environment Variables Reference
+
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL | Yes |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anonymous key | Yes |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role key | Yes |
+| `API_URL` | Backend API URL | Yes |
+| `JWT_SECRET` | JWT signing secret | Yes |
+| `ENCRYPTION_KEY` | Paste encryption key | Yes |
+| `REDIS_URL` | Redis connection URL | No |
+
+## Next Steps
+
+- Learn about the [Architecture](/developer-guide/architecture)
+- Read the [Contributing Guide](/developer-guide/contributing)
+- Explore the [API Reference](/api-reference)
