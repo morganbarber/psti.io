@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { createServiceClient } from '@repo/database';
+import { createServiceClient } from '@psti/database';
 
 @Injectable()
 export class AuthService {

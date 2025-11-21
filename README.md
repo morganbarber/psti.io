@@ -1,4 +1,4 @@
-# 🔒 SecurePaste - Enterprise Pastebin for Security Professionals
+# 🔒 psti.io - Enterprise Pastebin for Security Professionals
 
 A production-ready, security-focused pastebin application built with modern technologies and enterprise-level security features.
 
@@ -12,14 +12,14 @@ This is a Turborepo monorepo containing:
 - **raw** - Minimal raw paste viewer
 
 ### Packages
-- **@repo/database** - Supabase client and database utilities
-- **@repo/ui** - Shared UI components (shadcn/ui)
-- **@repo/auth** - Authentication utilities
-- **@repo/validation** - Zod validation schemas
-- **@repo/security** - Security utilities (encryption, sanitization)
-- **@repo/types** - Shared TypeScript types
-- **@repo/config** - Shared configuration
-- **@repo/eslint-config** - Shared ESLint configuration
+- **@psti/database** - Supabase client and database utilities
+- **@psti/ui** - Shared UI components (shadcn/ui)
+- **@psti/auth** - Authentication utilities
+- **@psti/validation** - Zod validation schemas
+- **@psti/security** - Security utilities (encryption, sanitization)
+- **@psti/types** - Shared TypeScript types
+- **@psti/config** - Shared configuration
+- **@psti/eslint-config** - Shared ESLint configuration
 
 ## 🚀 Features
 

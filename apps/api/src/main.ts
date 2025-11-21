@@ -30,7 +30,7 @@ async function bootstrap() {
 
     // Swagger documentation
     const config = new DocumentBuilder()
-        .setTitle('SecurePaste API')
+        .setTitle('psti.io API')
         .setDescription('Enterprise pastebin API for security professionals')
         .setVersion('1.0')
         .addBearerAuth()

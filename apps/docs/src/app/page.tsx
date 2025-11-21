@@ -1,9 +1,9 @@
 export default function HomePage() {
     return (
         <div className="prose">
-            <h1>SecurePaste Documentation</h1>
+            <h1>psti.io Documentation</h1>
             <p className="text-xl text-foreground/80 mb-8">
-                Welcome to the comprehensive documentation for SecurePaste - an enterprise-level,
+                Welcome to the comprehensive documentation for psti.io - an enterprise-level,
                 security-focused pastebin for security professionals.
             </p>
 
@@ -14,7 +14,7 @@ export default function HomePage() {
                 >
                     <h3 className="text-xl font-semibold mb-2 text-foreground">📖 User Guide</h3>
                     <p className="text-foreground/70">
-                        Learn how to use SecurePaste, create pastes, and manage your content.
+                        Learn how to use psti.io, create pastes, and manage your content.
                     </p>
                 </a>
 
@@ -34,7 +34,7 @@ export default function HomePage() {
                 >
                     <h3 className="text-xl font-semibold mb-2 text-foreground">🔌 API Reference</h3>
                     <p className="text-foreground/70">
-                        Complete API documentation for integrating with SecurePaste.
+                        Complete API documentation for integrating with psti.io.
                     </p>
                 </a>
             </div>

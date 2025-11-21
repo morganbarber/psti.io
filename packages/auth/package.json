@@ -1,5 +1,5 @@
 {
-    "name": "@repo/auth",
+    "name": "@psti/auth",
     "version": "0.0.0",
     "private": true,
     "main": "./src/index.ts",
@@ -9,13 +9,13 @@
         "type-check": "tsc --noEmit"
     },
     "dependencies": {
-        "@repo/database": "*",
-        "@repo/types": "*",
+        "@psti/database": "*",
+        "@psti/types": "*",
         "@supabase/ssr": "^0.5.2",
         "@supabase/supabase-js": "^2.47.10"
     },
     "devDependencies": {
-        "@repo/eslint-config": "*",
+        "@psti/eslint-config": "*",
         "@types/node": "^22.10.1",
         "eslint": "^9.16.0",
         "typescript": "^5.7.2"

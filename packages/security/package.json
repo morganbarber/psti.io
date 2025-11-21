@@ -1,5 +1,5 @@
 {
-    "name": "@repo/security",
+    "name": "@psti/security",
     "version": "0.0.0",
     "private": true,
     "main": "./src/index.ts",
@@ -9,12 +9,12 @@
         "type-check": "tsc --noEmit"
     },
     "dependencies": {
-        "@repo/config": "*",
+        "@psti/config": "*",
         "dompurify": "^3.2.2",
         "isomorphic-dompurify": "^2.16.0"
     },
     "devDependencies": {
-        "@repo/eslint-config": "*",
+        "@psti/eslint-config": "*",
         "@types/dompurify": "^3.2.0",
         "@types/node": "^22.10.1",
         "eslint": "^9.16.0",

@@ -1,6 +1,6 @@
-# 🔒 SecurePaste - Enterprise Pastebin Setup Guide
+# 🔒 psti.io - Enterprise Pastebin Setup Guide
 
-This guide will help you set up and run the SecurePaste application locally.
+This guide will help you set up and run the psti.io application locally.
 
 ## Prerequisites
 

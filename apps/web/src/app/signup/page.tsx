@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Button, Input, Label, Card, CardHeader, CardTitle, CardDescription, CardContent } from '@repo/ui';
+import { Button, Input, Label, Card, CardHeader, CardTitle, CardDescription, CardContent } from '@psti/ui';
 import { createClient } from '@/lib/supabase/client';
 import { Code2 } from 'lucide-react';
 
@@ -58,7 +58,7 @@ export default function SignupPage() {
             <div className="flex min-h-screen flex-col items-center justify-center p-4">
                 <Link href="/" className="mb-8 flex items-center space-x-2">
                     <Code2 className="h-8 w-8" />
-                    <span className="text-2xl font-bold">SecurePaste</span>
+                    <span className="text-2xl font-bold">psti.io</span>
                 </Link>
 
                 <Card className="w-full max-w-md">
@@ -83,7 +83,7 @@ export default function SignupPage() {
         <div className="flex min-h-screen flex-col items-center justify-center p-4">
             <Link href="/" className="mb-8 flex items-center space-x-2">
                 <Code2 className="h-8 w-8" />
-                <span className="text-2xl font-bold">SecurePaste</span>
+                <span className="text-2xl font-bold">psti.io</span>
             </Link>
 
             <Card className="w-full max-w-md">

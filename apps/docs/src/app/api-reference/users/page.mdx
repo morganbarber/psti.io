@@ -36,7 +36,7 @@ Retrieve the authenticated user's profile:
 **Example:**
 
 ```bash
-curl https://api.securepaste.com/users/profile \
+curl https://api.psti.io.com/users/profile \
   -H "Authorization: Bearer YOUR_TOKEN"
 ```
 
@@ -88,7 +88,7 @@ Update the authenticated user's profile:
 
 ```bash
 # Update email
-curl -X PATCH https://api.securepaste.com/users/profile \
+curl -X PATCH https://api.psti.io.com/users/profile \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
@@ -96,7 +96,7 @@ curl -X PATCH https://api.securepaste.com/users/profile \
   }'
 
 # Change password
-curl -X PATCH https://api.securepaste.com/users/profile \
+curl -X PATCH https://api.psti.io.com/users/profile \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
@@ -149,7 +149,7 @@ Get detailed statistics for the authenticated user:
 **Example:**
 
 ```bash
-curl https://api.securepaste.com/users/stats \
+curl https://api.psti.io.com/users/stats \
   -H "Authorization: Bearer YOUR_TOKEN"
 ```
 
@@ -187,7 +187,7 @@ Permanently delete the authenticated user's account:
 **Example:**
 
 ```bash
-curl -X DELETE https://api.securepaste.com/users/account \
+curl -X DELETE https://api.psti.io.com/users/account \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
@@ -232,7 +232,7 @@ curl -X DELETE https://api.securepaste.com/users/account \
 
 ```typescript
 // Get profile
-const profile = await fetch('https://api.securepaste.com/users/profile', {
+const profile = await fetch('https://api.psti.io.com/users/profile', {
   headers: {
     'Authorization': `Bearer ${token}`,
   },
@@ -242,7 +242,7 @@ const { data } = await profile.json();
 console.log('User:', data.email);
 
 // Update profile
-await fetch('https://api.securepaste.com/users/profile', {
+await fetch('https://api.psti.io.com/users/profile', {
   method: 'PATCH',
   headers: {
     'Authorization': `Bearer ${token}`,
@@ -254,7 +254,7 @@ await fetch('https://api.securepaste.com/users/profile', {
 });
 
 // Get stats
-const stats = await fetch('https://api.securepaste.com/users/stats', {
+const stats = await fetch('https://api.psti.io.com/users/stats', {
   headers: {
     'Authorization': `Bearer ${token}`,
   },
@@ -271,7 +271,7 @@ import requests
 
 # Get profile
 response = requests.get(
-    'https://api.securepaste.com/users/profile',
+    'https://api.psti.io.com/users/profile',
     headers={'Authorization': f'Bearer {token}'}
 )
 
@@ -280,14 +280,14 @@ print(f"User: {user['email']}")
 
 # Update profile
 requests.patch(
-    'https://api.securepaste.com/users/profile',
+    'https://api.psti.io.com/users/profile',
     headers={'Authorization': f'Bearer {token}'},
     json={'email': 'newemail@example.com'}
 )
 
 # Get stats
 stats_response = requests.get(
-    'https://api.securepaste.com/users/stats',
+    'https://api.psti.io.com/users/stats',
     headers={'Authorization': f'Bearer {token}'}
 )
 

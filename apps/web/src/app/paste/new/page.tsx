@@ -17,9 +17,9 @@ import {
     CardContent,
     CardHeader,
     CardTitle,
-} from '@repo/ui';
-import { SUPPORTED_LANGUAGES, EXPIRATION_DURATIONS } from '@repo/config';
-import { PasteVisibility, PasteExpiration } from '@repo/types';
+} from '@psti/ui';
+import { SUPPORTED_LANGUAGES, EXPIRATION_DURATIONS } from '@psti/config';
+import { PasteVisibility, PasteExpiration } from '@psti/types';
 import { Code2, Lock, Eye, EyeOff, Clock, Flame } from 'lucide-react';
 
 // Dynamically import Monaco editor to avoid SSR issues
@@ -73,7 +73,7 @@ export default function NewPastePage() {
                 <div className="container mx-auto flex h-16 items-center justify-between px-4">
                     <Link href="/" className="flex items-center space-x-2">
                         <Code2 className="h-6 w-6" />
-                        <span className="text-xl font-bold">SecurePaste</span>
+                        <span className="text-xl font-bold">psti.io</span>
                     </Link>
                     <div className="flex items-center space-x-4">
                         <Link href="/dashboard">

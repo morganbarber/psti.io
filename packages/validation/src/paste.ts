@@ -1,9 +1,9 @@
 import { z } from 'zod';
-import { PasteVisibility, PasteExpiration } from '@repo/types';
+import { PasteVisibility, PasteExpiration } from '@psti/types';
 import {
     PASTE_CONSTRAINTS,
     SUPPORTED_LANGUAGES,
-} from '@repo/config';
+} from '@psti/config';
 
 // Paste creation schema
 export const createPasteSchema = z.object({

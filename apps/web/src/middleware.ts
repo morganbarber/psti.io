@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
-import { SECURITY_HEADERS } from '@repo/config';
+import { SECURITY_HEADERS } from '@psti/config';
 
 export async function middleware(request: NextRequest) {
     let response = NextResponse.next({

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { PASSWORD_CONSTRAINTS } from '@repo/config';
+import { PASSWORD_CONSTRAINTS } from '@psti/config';
 
 // Email validation
 const emailSchema = z.string().email('Invalid email address');

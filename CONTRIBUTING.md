@@ -1,4 +1,4 @@
-# Contributing to SecurePaste
+# Contributing to psti.io
 
 First off, thanks for taking the time to contribute! 🎉
 

@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from '@repo/ui';
+import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from '@psti/ui';
 import { createClient } from '@/lib/supabase/server';
 import { Code2, Plus, LogOut } from 'lucide-react';
 
@@ -37,7 +37,7 @@ export default async function DashboardPage() {
                 <div className="container mx-auto flex h-16 items-center justify-between px-4">
                     <Link href="/" className="flex items-center space-x-2">
                         <Code2 className="h-6 w-6" />
-                        <span className="text-xl font-bold">SecurePaste</span>
+                        <span className="text-xl font-bold">psti.io</span>
                     </Link>
                     <div className="flex items-center space-x-4">
                         <Link href="/paste/new">

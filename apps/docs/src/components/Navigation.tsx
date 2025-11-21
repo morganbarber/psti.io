@@ -43,7 +43,7 @@ export function Navigation() {
         <nav className="fixed left-0 top-0 h-screen w-64 bg-secondary border-r border-border overflow-y-auto">
             <div className="p-6">
                 <Link href="/" className="text-xl font-bold text-primary">
-                    SecurePaste Docs
+                    psti.io Docs
                 </Link>
             </div>
             <div className="px-4 pb-6">
@@ -60,8 +60,8 @@ export function Navigation() {
                                         <Link
                                             href={item.href}
                                             className={`block px-2 py-1.5 rounded text-sm transition-colors ${isActive
-                                                    ? 'bg-primary text-primary-foreground font-medium'
-                                                    : 'text-foreground/80 hover:bg-muted hover:text-foreground'
+                                                ? 'bg-primary text-primary-foreground font-medium'
+                                                : 'text-foreground/80 hover:bg-muted hover:text-foreground'
                                                 }`}
                                         >
                                             {item.title}

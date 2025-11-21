@@ -1,5 +1,5 @@
 import type { SupabaseClient, User } from '@supabase/supabase-js';
-import type { Database } from '@repo/database';
+import type { Database } from '@psti/database';
 
 /**
  * Get the current authenticated user

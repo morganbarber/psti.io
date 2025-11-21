@@ -1,11 +1,11 @@
 # API Reference
 
-Welcome to the SecurePaste API documentation. This reference provides detailed information about all available API endpoints.
+Welcome to the psti.io API documentation. This reference provides detailed information about all available API endpoints.
 
 ## Base URL
 
 ```
-https://api.securepaste.com
+https://api.psti.io.com
 ```
 
 For local development:
@@ -79,7 +79,7 @@ All endpoints are rate-limited. See [Rate Limiting](/api-reference/rate-limiting
 
 ```bash
 # Login to get JWT token
-curl -X POST https://api.securepaste.com/auth/login \
+curl -X POST https://api.psti.io.com/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email": "user@example.com", "password": "password"}'
 ```
@@ -88,7 +88,7 @@ curl -X POST https://api.securepaste.com/auth/login \
 
 ```bash
 # Create a paste
-curl -X POST https://api.securepaste.com/api/pastes \
+curl -X POST https://api.psti.io.com/api/pastes \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{

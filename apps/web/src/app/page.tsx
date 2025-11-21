@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Button } from '@repo/ui';
+import { Button } from '@psti/ui';
 import { Code2, Lock, Zap, Shield, Eye, Clock } from 'lucide-react';
 
 export default function HomePage() {
@@ -10,7 +10,7 @@ export default function HomePage() {
                 <div className="container mx-auto flex h-16 items-center justify-between px-4">
                     <Link href="/" className="flex items-center space-x-2">
                         <Code2 className="h-6 w-6" />
-                        <span className="text-xl font-bold">SecurePaste</span>
+                        <span className="text-xl font-bold">psti.io</span>
                     </Link>
                     <nav className="flex items-center space-x-4">
                         <Link href="/paste/new">
@@ -96,7 +96,7 @@ export default function HomePage() {
                     <div className="mx-auto max-w-2xl rounded-lg border border-border bg-card p-12 text-center">
                         <h2 className="mb-4 text-3xl font-bold">Ready to get started?</h2>
                         <p className="mb-8 text-muted-foreground">
-                            Join thousands of security professionals using SecurePaste for secure code sharing.
+                            Join thousands of security professionals using psti.io for secure code sharing.
                         </p>
                         <Link href="/signup">
                             <Button size="lg">Create Free Account</Button>
@@ -108,7 +108,7 @@ export default function HomePage() {
             {/* Footer */}
             <footer className="border-t border-border py-8">
                 <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-                    <p>&copy; 2024 SecurePaste. Built with security in mind.</p>
+                    <p>&copy; 2024 psti.io. Built with security in mind.</p>
                 </div>
             </footer>
         </div>

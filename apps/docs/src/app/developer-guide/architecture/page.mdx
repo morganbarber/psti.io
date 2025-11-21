@@ -1,10 +1,10 @@
 # Architecture
 
-This document provides an overview of SecurePaste's architecture, design decisions, and technical implementation.
+This document provides an overview of psti.io's architecture, design decisions, and technical implementation.
 
 ## System Architecture
 
-SecurePaste is built as a **monorepo** using Turborepo, containing multiple applications and shared packages.
+psti.io is built as a **monorepo** using Turborepo, containing multiple applications and shared packages.
 
 ```mermaid
 graph TB
@@ -65,37 +65,37 @@ graph TB
 
 ### Packages (`packages/`)
 
-#### Database (`@repo/database`)
+#### Database (`@psti/database`)
 - Supabase client configuration
 - Database types and schemas
 - Migration management
 
-#### UI (`@repo/ui`)
+#### UI (`@psti/ui`)
 - Shared React components
 - shadcn/ui component library
 - Tailwind CSS configuration
 
-#### Auth (`@repo/auth`)
+#### Auth (`@psti/auth`)
 - Authentication utilities
 - JWT handling
 - Session management
 
-#### Validation (`@repo/validation`)
+#### Validation (`@psti/validation`)
 - Zod schemas
 - Input validation
 - Type-safe validation
 
-#### Security (`@repo/security`)
+#### Security (`@psti/security`)
 - Encryption utilities (AES-256-GCM)
 - Input sanitization
 - Security headers
 
-#### Types (`@repo/types`)
+#### Types (`@psti/types`)
 - Shared TypeScript types
 - API contracts
 - Database types
 
-#### Config (`@repo/config`)
+#### Config (`@psti/config`)
 - Shared configuration
 - Environment variables
 - Constants
@@ -186,7 +186,7 @@ interface Folder {
 
 ### Defense in Depth
 
-SecurePaste implements multiple layers of security:
+psti.io implements multiple layers of security:
 
 1. **Application Layer**
    - Input validation and sanitization

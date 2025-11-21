@@ -1,5 +1,5 @@
 {
-    "name": "@repo/validation",
+    "name": "@psti/validation",
     "version": "0.0.0",
     "private": true,
     "main": "./src/index.ts",
@@ -9,12 +9,12 @@
         "type-check": "tsc --noEmit"
     },
     "dependencies": {
-        "@repo/config": "*",
-        "@repo/types": "*",
+        "@psti/config": "*",
+        "@psti/types": "*",
         "zod": "^3.23.8"
     },
     "devDependencies": {
-        "@repo/eslint-config": "*",
+        "@psti/eslint-config": "*",
         "@types/node": "^22.10.1",
         "eslint": "^9.16.0",
         "typescript": "^5.7.2"

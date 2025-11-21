@@ -1,10 +1,10 @@
 # Rate Limiting
 
-Understand SecurePaste's rate limiting policies and how to handle rate limits.
+Understand psti.io's rate limiting policies and how to handle rate limits.
 
 ## Overview
 
-SecurePaste implements rate limiting to prevent abuse and ensure fair usage for all users. Rate limits vary by endpoint and user type.
+psti.io implements rate limiting to prevent abuse and ensure fair usage for all users. Rate limits vary by endpoint and user type.
 
 ## Rate Limit Tiers
 
@@ -79,7 +79,7 @@ Retry-After: 3600
 Always check rate limit headers before making requests:
 
 ```typescript
-const response = await fetch('https://api.securepaste.com/api/pastes');
+const response = await fetch('https://api.psti.io.com/api/pastes');
 
 const limit = response.headers.get('X-RateLimit-Limit');
 const remaining = response.headers.get('X-RateLimit-Remaining');
@@ -152,7 +152,7 @@ async function getPaste(id: string) {
     return cache.get(id);
   }
   
-  const response = await fetch(`https://api.securepaste.com/api/pastes/${id}`);
+  const response = await fetch(`https://api.psti.io.com/api/pastes/${id}`);
   const data = await response.json();
   
   cache.set(id, data);
@@ -206,13 +206,13 @@ Authenticated users have higher rate limits:
 
 ```typescript
 // Anonymous: 10 pastes/hour
-await fetch('https://api.securepaste.com/api/pastes', {
+await fetch('https://api.psti.io.com/api/pastes', {
   method: 'POST',
   body: JSON.stringify(paste),
 });
 
 // Authenticated: 100 pastes/hour
-await fetch('https://api.securepaste.com/api/pastes', {
+await fetch('https://api.psti.io.com/api/pastes', {
   method: 'POST',
   headers: {
     'Authorization': `Bearer ${token}`, // ✅ Higher limits
@@ -231,7 +231,7 @@ Enterprise customers can request custom rate limits. Contact sales for details.
 
 ```typescript
 class APIClient {
-  private baseURL = 'https://api.securepaste.com';
+  private baseURL = 'https://api.psti.io.com';
   private token?: string;
   private rateLimitMonitor = new RateLimitMonitor();
   
@@ -311,7 +311,7 @@ from typing import Optional
 
 class APIClient:
     def __init__(self, token: Optional[str] = None):
-        self.base_url = 'https://api.securepaste.com'
+        self.base_url = 'https://api.psti.io.com'
         self.token = token
         self.session = requests.Session()
         

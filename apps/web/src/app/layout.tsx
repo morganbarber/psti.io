@@ -1,7 +1,7 @@
-import '@repo/ui/globals.css';
+import '@psti/ui/globals.css';
 
 export const metadata = {
-    title: 'SecurePaste - Enterprise Pastebin for Security Professionals',
+    title: 'psti.io - Enterprise Pastebin for Security Professionals',
     description: 'A production-ready, security-focused pastebin with encryption, password protection, and advanced features.',
 };
 

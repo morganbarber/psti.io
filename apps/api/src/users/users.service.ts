@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { createServiceClient, type Database } from '@repo/database';
+import { createServiceClient, type Database } from '@psti/database';
 
 @Injectable()
 export class UsersService {

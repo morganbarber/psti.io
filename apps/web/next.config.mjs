@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    transpilePackages: ['@repo/ui', '@repo/database', '@repo/auth', '@repo/validation', '@repo/security', '@repo/types', '@repo/config'],
+    transpilePackages: ['@psti/ui', '@psti/database', '@psti/auth', '@psti/validation', '@psti/security', '@psti/types', '@psti/config'],
     experimental: {
         serverActions: {
             bodySizeLimit: '10mb',

@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
-import { createServiceClient, type Database } from '@repo/database';
-import { encrypt, decrypt, hashPassword, verifyPassword } from '@repo/security';
-import { CreatePasteInput, UpdatePasteInput } from '@repo/validation';
-import { EXPIRATION_DURATIONS } from '@repo/config';
+import { createServiceClient, type Database } from '@psti/database';
+import { encrypt, decrypt, hashPassword, verifyPassword } from '@psti/security';
+import { CreatePasteInput, UpdatePasteInput } from '@psti/validation';
+import { EXPIRATION_DURATIONS } from '@psti/config';
 
 @Injectable()
 export class PastesService {

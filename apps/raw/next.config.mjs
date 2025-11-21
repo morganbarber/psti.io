@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    transpilePackages: ['@repo/database'],
+    transpilePackages: ['@psti/database'],
 };
 
 export default nextConfig;

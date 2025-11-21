@@ -1,5 +1,5 @@
 import { createCipheriv, createDecipheriv, randomBytes, pbkdf2Sync } from 'crypto';
-import { ENCRYPTION_CONFIG } from '@repo/config';
+import { ENCRYPTION_CONFIG } from '@psti/config';
 
 /**
  * Encryption utilities for paste content

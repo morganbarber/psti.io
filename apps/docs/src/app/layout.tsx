@@ -3,8 +3,8 @@ import "./globals.css";
 import { Navigation } from "@/components/Navigation";
 
 export const metadata: Metadata = {
-    title: "SecurePaste Documentation",
-    description: "Comprehensive documentation for SecurePaste - Enterprise Pastebin for Security Professionals",
+    title: "psti.io Documentation",
+    description: "Comprehensive documentation for psti.io - Enterprise Pastebin for Security Professionals",
 };
 
 export default function RootLayout({

@@ -9,7 +9,7 @@
         "lint": "next lint"
     },
     "dependencies": {
-        "@repo/database": "*",
+        "@psti/database": "*",
         "@supabase/ssr": "^0.5.2",
         "@supabase/supabase-js": "^2.47.10",
         "next": "^15.1.0",
