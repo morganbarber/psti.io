@@ -4,26 +4,10 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from '@psti/ui';
+import { Paste } from '@psti/types';
 import { createClient } from '@/lib/supabase/client';
 import { getUserPastes } from '@/lib/api';
 import { Code2, Plus, LogOut, Loader2 } from 'lucide-react';
-
-interface Paste {
-    id: string;
-    user_id: string | null;
-    title: string;
-    content: string;
-    language: string;
-    visibility: string;
-    password_hash: string | null;
-    expires_at: string | null;
-    encrypted: boolean;
-    burn_after_read: boolean;
-    view_count: number;
-    folder_id: string | null;
-    created_at: string;
-    updated_at: string;
-}
 
 export default function DashboardPage() {
     const router = useRouter();

@@ -1,34 +1,8 @@
 import { CreatePasteInput, UpdatePasteInput } from '@psti/validation';
+import { Paste, ApiResponse } from '@psti/types';
 import { createClient } from './supabase/client';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-
-interface ApiResponse<T> {
-    success: boolean;
-    data?: T;
-    message?: string;
-    error?: string;
-}
-
-interface Paste {
-    id: string;
-    user_id: string | null;
-    title: string;
-    content: string;
-    language: string;
-    visibility: string;
-    password_hash: string | null;
-    expires_at: string | null;
-    encrypted: boolean;
-    burn_after_read: boolean;
-    view_count: number;
-    folder_id: string | null;
-    created_at: string;
-    updated_at: string;
-    encryption_iv: string | null;
-    encryption_auth_tag: string | null;
-    encryption_salt: string | null;
-}
 
 /**
  * Get the authorization token from Supabase session
