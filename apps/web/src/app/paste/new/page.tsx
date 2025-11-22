@@ -21,6 +21,7 @@ import {
 import { SUPPORTED_LANGUAGES, EXPIRATION_DURATIONS } from '@psti/config';
 import { PasteVisibility, PasteExpiration } from '@psti/types';
 import { Code2, Lock, Eye, EyeOff, Clock, Flame } from 'lucide-react';
+import { createPaste } from '@/lib/api';
 
 // Dynamically import Monaco editor to avoid SSR issues
 const MonacoEditor = dynamic(() => import('@monaco-editor/react'), { ssr: false });
@@ -44,21 +45,27 @@ export default function NewPastePage() {
         setError('');
 
         try {
-            // TODO: Implement API call to create paste
-            // For now, just show success
-            console.log({
+            // Prepare the paste data according to the API schema
+            const pasteData = {
                 title,
                 content,
                 language,
                 visibility,
-                password,
-                expiration,
+                password: password || undefined,
+                expiration: expiration || undefined,
                 encrypted,
-                burnAfterRead,
-            });
+                burn_after_read: burnAfterRead,
+            };
 
-            // Redirect to paste view (placeholder)
-            router.push('/dashboard');
+            // Call the API to create the paste
+            const response = await createPaste(pasteData);
+
+            if (!response.success || !response.data) {
+                throw new Error(response.error || 'Failed to create paste');
+            }
+
+            // Redirect to the created paste view
+            router.push(`/paste/${response.data.id}`);
         } catch (err: any) {
             setError(err.message || 'Failed to create paste');
         } finally {
