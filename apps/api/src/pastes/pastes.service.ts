@@ -12,8 +12,8 @@ export class PastesService {
         let content = createPasteDto.content;
         let encryptionData = null;
 
-        // Encrypt content if requested
-        if (createPasteDto.encrypted) {
+        // Encrypt content if requested and NOT client-side encrypted
+        if (createPasteDto.encrypted && !createPasteDto.encrypted_client_side) {
             const encrypted = encrypt(content, createPasteDto.password);
             content = encrypted.encrypted;
             encryptionData = {
@@ -25,7 +25,9 @@ export class PastesService {
 
         // Hash password if provided
         let passwordHash = null;
-        if (createPasteDto.password && !createPasteDto.encrypted) {
+        // If client-side encrypted, we still might want password protection (access control)
+        // So we hash the password if provided, regardless of encryption method
+        if (createPasteDto.password) {
             passwordHash = hashPassword(createPasteDto.password);
         }
 
@@ -92,12 +94,12 @@ export class PastesService {
             }
         }
 
-        // Decrypt content if encrypted
-        if (paste.encrypted && password) {
+        // Decrypt content if encrypted AND we have server-side encryption data
+        if (paste.encrypted && password && paste.encryption_iv) {
             const decrypted = decrypt(
                 {
                     encrypted: paste.content,
-                    iv: paste.encryption_iv!,
+                    iv: paste.encryption_iv,
                     authTag: paste.encryption_auth_tag!,
                     salt: paste.encryption_salt!,
                 },

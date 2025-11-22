@@ -45,15 +45,27 @@ export default function NewPastePage() {
         setError('');
 
         try {
+            let finalContent = content;
+            let key = '';
+
+            // Handle client-side encryption
+            if (encrypted) {
+                // Import dynamically to avoid SSR issues if needed, but we are in 'use client'
+                const { encryptContent, generateKey } = await import('@psti/security');
+                key = await generateKey();
+                finalContent = await encryptContent(content, key);
+            }
+
             // Prepare the paste data according to the API schema
             const pasteData = {
                 title,
-                content,
+                content: finalContent,
                 language,
                 visibility,
                 password: password || undefined,
                 expiration: expiration || undefined,
                 encrypted,
+                encrypted_client_side: encrypted, // Signal to server that we encrypted it
                 burn_after_read: burnAfterRead,
             };
 
@@ -65,8 +77,11 @@ export default function NewPastePage() {
             }
 
             // Redirect to the created paste view
-            router.push(`/paste/${response.data.id}`);
+            // Append key to hash if encrypted
+            const redirectUrl = `/paste/${response.data.id}${encrypted ? `#${key}` : ''}`;
+            router.push(redirectUrl);
         } catch (err: any) {
+            console.error('Creation error:', err);
             setError(err.message || 'Failed to create paste');
         } finally {
             setLoading(false);

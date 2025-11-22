@@ -25,6 +25,7 @@ export const createPasteSchema = z.object({
     password: z.string().min(4, 'Password must be at least 4 characters').optional(),
     expiration: z.nativeEnum(PasteExpiration).optional(),
     encrypted: z.boolean().default(false),
+    encrypted_client_side: z.boolean().optional(),
     burn_after_read: z.boolean().default(false),
     folder_id: z.string().uuid().optional(),
 });
