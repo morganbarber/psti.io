@@ -204,7 +204,7 @@ export default function NewPastePage() {
                                             <SelectValue placeholder="Never" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="">Never</SelectItem>
+                                            <SelectItem value={PasteExpiration.NEVER}>Never</SelectItem>
                                             <SelectItem value={PasteExpiration.TEN_MINUTES}>10 minutes</SelectItem>
                                             <SelectItem value={PasteExpiration.ONE_HOUR}>1 hour</SelectItem>
                                             <SelectItem value={PasteExpiration.ONE_DAY}>1 day</SelectItem>
