@@ -1,5 +1,3 @@
-import DOMPurify from 'isomorphic-dompurify';
-
 /**
  * Sanitization utilities for XSS protection
  */
@@ -10,6 +8,8 @@ import DOMPurify from 'isomorphic-dompurify';
  * @returns Sanitized HTML
  */
 export function sanitizeHtml(html: string): string {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
+    const DOMPurify = require('isomorphic-dompurify');
     return DOMPurify.sanitize(html, {
         ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br', 'code', 'pre'],
         ALLOWED_ATTR: ['href', 'title'],
