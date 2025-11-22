@@ -23,4 +23,10 @@ export {
     SelectScrollDownButton,
 } from './components/select';
 export { Tabs, TabsList, TabsTrigger, TabsContent } from './components/tabs';
+export {
+    Accordion,
+    AccordionItem,
+    AccordionTrigger,
+    AccordionContent,
+} from './components/accordion';
 export { cn } from './lib/utils';

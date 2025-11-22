@@ -14,7 +14,8 @@ import {
     CardTitle,
 } from '@psti/ui';
 import { getPaste } from '@/lib/api';
-import { Code2, Lock, Eye, Calendar, Flame, ArrowLeft } from 'lucide-react';
+import { decryptContent } from '@psti/security';
+import { Code2, Lock, Eye, Calendar, Flame, ArrowLeft, AlertTriangle } from 'lucide-react';
 
 const MonacoEditor = dynamic(() => import('@monaco-editor/react'), { ssr: false });
 
@@ -33,6 +34,8 @@ export default function PasteViewPage({ params }: PasteViewProps) {
     const [password, setPassword] = useState('');
     const [requiresPassword, setRequiresPassword] = useState(false);
     const [passwordError, setPasswordError] = useState('');
+    const [decryptionError, setDecryptionError] = useState('');
+    const [isDecrypting, setIsDecrypting] = useState(false);
 
     const loadPaste = async (pwd?: string) => {
         try {
@@ -53,7 +56,32 @@ export default function PasteViewPage({ params }: PasteViewProps) {
             }
 
             if (response.data) {
-                setPaste(response.data);
+                let pasteData = response.data;
+
+                // Handle client-side decryption if encrypted
+                if (pasteData.encrypted) {
+                    const hash = window.location.hash.substring(1); // Remove #
+                    if (hash) {
+                        try {
+                            setIsDecrypting(true);
+                            const decryptedContent = await decryptContent(pasteData.content, hash);
+                            pasteData = {
+                                ...pasteData,
+                                content: decryptedContent,
+                                encrypted: false, // Mark as decrypted for display
+                            };
+                        } catch (err) {
+                            console.error('Decryption error:', err);
+                            setDecryptionError('Failed to decrypt paste. The key in the URL might be invalid.');
+                        } finally {
+                            setIsDecrypting(false);
+                        }
+                    } else {
+                        setDecryptionError('This paste is encrypted, but no decryption key was found in the URL.');
+                    }
+                }
+
+                setPaste(pasteData);
                 setRequiresPassword(false);
             }
         } catch (err: any) {
@@ -211,7 +239,7 @@ export default function PasteViewPage({ params }: PasteViewProps) {
                                         <Calendar className="mr-1 h-4 w-4" />
                                         {new Date(paste.created_at).toLocaleDateString()}
                                     </span>
-                                    {paste.encrypted && (
+                                    {paste.encrypted && !decryptionError && (
                                         <span className="flex items-center text-primary">
                                             <Lock className="mr-1 h-4 w-4" />
                                             Encrypted
@@ -231,6 +259,7 @@ export default function PasteViewPage({ params }: PasteViewProps) {
                                     onClick={() => {
                                         navigator.clipboard.writeText(paste.content);
                                     }}
+                                    disabled={!!decryptionError}
                                 >
                                     Copy
                                 </Button>
@@ -245,6 +274,7 @@ export default function PasteViewPage({ params }: PasteViewProps) {
                                         a.click();
                                         URL.revokeObjectURL(url);
                                     }}
+                                    disabled={!!decryptionError}
                                 >
                                     Download
                                 </Button>
@@ -252,13 +282,29 @@ export default function PasteViewPage({ params }: PasteViewProps) {
                         </div>
                     </div>
 
+                    {/* Decryption Error */}
+                    {decryptionError && (
+                        <div className="mb-6 rounded-md bg-destructive/10 p-4 text-destructive flex items-center">
+                            <AlertTriangle className="h-5 w-5 mr-2" />
+                            {decryptionError}
+                        </div>
+                    )}
+
                     {/* Code Editor */}
-                    <div className="h-[600px] overflow-hidden rounded-md border border-border">
+                    <div className="h-[600px] overflow-hidden rounded-md border border-border relative">
+                        {isDecrypting && (
+                            <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/80 backdrop-blur-sm">
+                                <div className="text-center">
+                                    <Lock className="mx-auto mb-4 h-12 w-12 animate-pulse text-primary" />
+                                    <p className="text-muted-foreground">Decrypting content...</p>
+                                </div>
+                            </div>
+                        )}
                         <MonacoEditor
                             height="600px"
                             language={paste.language}
                             theme="vs-dark"
-                            value={paste.content}
+                            value={decryptionError ? 'Encrypted Content' : paste.content}
                             options={{
                                 readOnly: true,
                                 minimap: { enabled: true },
