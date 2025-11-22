@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
@@ -19,13 +19,14 @@ import { Code2, Lock, Eye, Calendar, Flame, ArrowLeft } from 'lucide-react';
 const MonacoEditor = dynamic(() => import('@monaco-editor/react'), { ssr: false });
 
 interface PasteViewProps {
-    params: {
+    params: Promise<{
         id: string;
-    };
+    }>;
 }
 
 export default function PasteViewPage({ params }: PasteViewProps) {
     const router = useRouter();
+    const { id } = use(params);
     const [paste, setPaste] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -37,7 +38,7 @@ export default function PasteViewPage({ params }: PasteViewProps) {
         try {
             setLoading(true);
             setPasswordError('');
-            const response = await getPaste(params.id, pwd);
+            const response = await getPaste(id, pwd);
 
             if (!response.success) {
                 if (response.error?.includes('Password required')) {
@@ -64,7 +65,7 @@ export default function PasteViewPage({ params }: PasteViewProps) {
 
     useEffect(() => {
         loadPaste();
-    }, [params.id]);
+    }, [id]);
 
     const handlePasswordSubmit = (e: React.FormEvent) => {
         e.preventDefault();

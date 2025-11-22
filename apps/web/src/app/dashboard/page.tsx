@@ -1,34 +1,89 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from '@psti/ui';
-import { createClient } from '@/lib/supabase/server';
-import { Code2, Plus, LogOut } from 'lucide-react';
+import { createClient } from '@/lib/supabase/client';
+import { getUserPastes } from '@/lib/api';
+import { Code2, Plus, LogOut, Loader2 } from 'lucide-react';
 
-export default async function DashboardPage() {
-    const supabase = await createClient();
+interface Paste {
+    id: string;
+    user_id: string | null;
+    title: string;
+    content: string;
+    language: string;
+    visibility: string;
+    password_hash: string | null;
+    expires_at: string | null;
+    encrypted: boolean;
+    burn_after_read: boolean;
+    view_count: number;
+    folder_id: string | null;
+    created_at: string;
+    updated_at: string;
+}
 
-    const {
-        data: { user },
-    } = await supabase.auth.getUser();
+export default function DashboardPage() {
+    const router = useRouter();
+    const [user, setUser] = useState<any>(null);
+    const [pastes, setPastes] = useState<Paste[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
-    if (!user) {
-        redirect('/login');
-    }
+    useEffect(() => {
+        const checkUser = async () => {
+            const supabase = createClient();
+            const {
+                data: { user },
+            } = await supabase.auth.getUser();
 
-    // Fetch user's pastes
-    const { data: pastes } = await supabase
-        .from('pastes')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(10);
+            if (!user) {
+                router.push('/login');
+                return;
+            }
+
+            setUser(user);
+        };
+
+        checkUser();
+    }, [router]);
+
+    useEffect(() => {
+        const fetchPastes = async () => {
+            if (!user) return;
+
+            setLoading(true);
+            setError(null);
+
+            const response = await getUserPastes();
+
+            if (response.success && response.data) {
+                setPastes(response.data);
+            } else {
+                setError(response.error || 'Failed to fetch pastes');
+            }
+
+            setLoading(false);
+        };
+
+        fetchPastes();
+    }, [user]);
 
     const handleSignOut = async () => {
-        'use server';
-        const supabase = await createClient();
+        const supabase = createClient();
         await supabase.auth.signOut();
-        redirect('/');
+        router.push('/');
     };
+
+    if (!user) {
+        return (
+            <div className="flex min-h-screen items-center justify-center">
+                <Loader2 className="h-8 w-8 animate-spin" />
+            </div>
+        );
+    }
 
     return (
         <div className="flex min-h-screen flex-col">
@@ -46,12 +101,10 @@ export default async function DashboardPage() {
                                 New Paste
                             </Button>
                         </Link>
-                        <form action={handleSignOut}>
-                            <Button variant="outline" type="submit">
-                                <LogOut className="mr-2 h-4 w-4" />
-                                Sign Out
-                            </Button>
-                        </form>
+                        <Button variant="outline" onClick={handleSignOut}>
+                            <LogOut className="mr-2 h-4 w-4" />
+                            Sign Out
+                        </Button>
                     </div>
                 </div>
             </header>
@@ -103,7 +156,17 @@ export default async function DashboardPage() {
                             <CardDescription>Your most recently created pastes</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            {!pastes || pastes.length === 0 ? (
+                            {loading ? (
+                                <div className="py-12 text-center">
+                                    <Loader2 className="mx-auto mb-4 h-12 w-12 animate-spin text-muted-foreground" />
+                                    <p className="text-muted-foreground">Loading your pastes...</p>
+                                </div>
+                            ) : error ? (
+                                <div className="py-12 text-center">
+                                    <p className="mb-4 text-destructive">{error}</p>
+                                    <Button onClick={() => window.location.reload()}>Retry</Button>
+                                </div>
+                            ) : !pastes || pastes.length === 0 ? (
                                 <div className="py-12 text-center">
                                     <Code2 className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
                                     <p className="mb-4 text-muted-foreground">You haven't created any pastes yet</p>
