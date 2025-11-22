@@ -47,6 +47,12 @@ async function apiRequest<T>(
         const data = await response.json();
 
         if (!response.ok) {
+            if (data.message == "Password required") {
+                return {
+                    success: false,
+                    error: data.message,
+                };
+            }
             throw new Error(data.message || `API error: ${response.status}`);
         }
 
