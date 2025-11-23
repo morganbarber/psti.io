@@ -18,9 +18,9 @@ import {
     CardHeader,
     CardTitle,
 } from '@psti/ui';
-import { SUPPORTED_LANGUAGES, EXPIRATION_DURATIONS } from '@psti/config';
+import { SUPPORTED_LANGUAGES } from '@psti/config';
 import { PasteVisibility, PasteExpiration } from '@psti/types';
-import { Code2, Lock, Eye, EyeOff, Clock, Flame } from 'lucide-react';
+import { Code2, Lock, Eye, EyeOff, Flame } from 'lucide-react';
 import { createPaste } from '@/lib/api';
 
 // Dynamically import Monaco editor to avoid SSR issues

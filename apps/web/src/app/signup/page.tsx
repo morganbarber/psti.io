@@ -2,13 +2,11 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { Button, Input, Label, Card, CardHeader, CardTitle, CardDescription, CardContent } from '@psti/ui';
 import { createClient } from '@/lib/supabase/client';
 import { Code2 } from 'lucide-react';
 
 export default function SignupPage() {
-    const router = useRouter();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -65,7 +63,7 @@ export default function SignupPage() {
                     <CardHeader>
                         <CardTitle>Check your email</CardTitle>
                         <CardDescription>
-                            We've sent you a confirmation email. Please check your inbox and click the link to
+                            We&apos;ve sent you a confirmation email. Please check your inbox and click the link to
                             verify your account.
                         </CardDescription>
                     </CardHeader>

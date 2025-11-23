@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Lock, Eye, Clock, Zap, Code2, Shield, Terminal, Share2, Globe } from 'lucide-react';
+import { Lock, Eye, Clock, Zap, Shield, Terminal } from 'lucide-react';
 
 const features = [
     {

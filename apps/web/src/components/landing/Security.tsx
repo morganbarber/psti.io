@@ -30,7 +30,7 @@ export function Security() {
                             Enterprise-Grade Security
                         </h2>
                         <p className="text-lg text-muted-foreground mb-8">
-                            We don't just claim to be secure; we prove it. Our zero-knowledge architecture ensures that
+                            We don&apos;t just claim to be secure; we prove it. Our zero-knowledge architecture ensures that
                             even we cannot read your pastes. Your data is encrypted in your browser before it ever reaches our servers.
                         </p>
 

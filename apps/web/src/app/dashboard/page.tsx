@@ -153,7 +153,7 @@ export default function DashboardPage() {
                             ) : !pastes || pastes.length === 0 ? (
                                 <div className="py-12 text-center">
                                     <Code2 className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
-                                    <p className="mb-4 text-muted-foreground">You haven't created any pastes yet</p>
+                                    <p className="mb-4 text-muted-foreground">You haven&apos;t created any pastes yet</p>
                                     <Link href="/paste/new">
                                         <Button>Create Your First Paste</Button>
                                     </Link>

@@ -37,8 +37,9 @@ async function getPaste(id: string) {
     return data;
 }
 
-export default async function RawPastePage({ params }: { params: { id: string } }) {
-    const paste = await getPaste(params.id);
+export default async function RawPastePage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+    const paste = await getPaste(id);
 
     if (!paste) {
         notFound();
@@ -51,8 +52,9 @@ export default async function RawPastePage({ params }: { params: { id: string } 
     );
 }
 
-export async function generateMetadata({ params }: { params: { id: string } }) {
-    const paste = await getPaste(params.id);
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+    const paste = await getPaste(id);
 
     return {
         title: paste ? `${paste.title} - Raw` : 'Paste Not Found',
