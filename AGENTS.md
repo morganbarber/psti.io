@@ -7,13 +7,14 @@ The project is a Turborepo monorepo with the following structure:
 - `apps/web`: Next.js 16 frontend
 - `apps/api`: NestJS backend
 - `apps/raw`: Raw paste viewer
+- `apps/docs`: Documentation for API, contributing, and usage.
 - `packages/*`: Shared packages
 
 ## Conventions
 - **Package Manager**: npm
 - **Styling**: Tailwind CSS + shadcn/ui
 - **Database**: Supabase
-- **ORM**: None (Direct Supabase Client) / Prisma (if applicable, check package.json)
+- **ORM**: None (Direct Supabase Client)
 - **Validation**: Zod
 
 ## Key Files
