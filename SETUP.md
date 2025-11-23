@@ -149,13 +149,21 @@ pastebin/
 ## Security Features
 
 ✅ **Row Level Security (RLS)** - Database-level access control
+
 ✅ **AES-256-GCM Encryption** - For sensitive pastes
+
 ✅ **Password Protection** - Optional password for pastes
+
 ✅ **Rate Limiting** - Prevents abuse
+
 ✅ **XSS Protection** - Input sanitization
+
 ✅ **CSRF Protection** - Secure headers
+
 ✅ **Helmet** - Security headers
+
 ✅ **Burn After Read** - Self-destructing pastes
+
 ✅ **Expiration** - Automatic paste deletion
 
 ## Common Issues
