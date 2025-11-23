@@ -26,3 +26,7 @@ First off, thanks for taking the time to contribute! 🎉
 ## Testing
 
 - Run `npm run test` to ensure all tests pass.
+
+## Code Scanning
+
+- Ensure CodeQL passes before merging to any official branches.
