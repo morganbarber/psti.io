@@ -11,13 +11,13 @@
 }
 
 :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-    --primary: #3b82f6;
-    --primary-foreground: #ffffff;
-    --secondary: #1f2937;
-    --border: #27272a;
-    --muted: #18181b;
+    --background: hsl(225, 50%, 8%);
+    --foreground: hsl(210, 40%, 98%);
+    --primary: hsl(225, 70%, 60%);
+    --primary-foreground: hsl(210, 40%, 98%);
+    --secondary: hsl(225, 40%, 18%);
+    --border: hsl(225, 40%, 18%);
+    --muted: hsl(225, 40%, 18%);
 }
 
 body {
