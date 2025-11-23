@@ -67,6 +67,8 @@ This is a Turborepo monorepo containing:
 
 ## [Setup](./SETUP.md)
 
+## [Deployment](./DEPLOYMENT.md)
+
 ## Build
 
 ```bash
