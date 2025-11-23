@@ -25,5 +25,6 @@ The project is a Turborepo monorepo with the following structure:
 ## Do's and Don'ts
 - **Do** use absolute paths when referencing files in tool calls.
 - **Do** run `npm run build` to verify changes.
+- **Do** run `npm run lint` to verify your code meets our quality standards.
 - **Don't** modify `.gitignore` unless necessary.
 - **Don't** hardcode secrets.
