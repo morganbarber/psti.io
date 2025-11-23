@@ -34,7 +34,7 @@ export class OptionalAuthGuard implements CanActivate {
                 request.user = user; // Attach user to request
             }
             return true;
-        } catch (error) {
+        } catch {
             // Token present but invalid - still allow request (permissive)
             // Anonymous paste creation will be used as fallback
             return true;

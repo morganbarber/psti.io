@@ -6,7 +6,7 @@
         "dev": "next dev -p 3002",
         "build": "next build",
         "start": "next start -p 3002",
-        "lint": "next lint"
+        "lint": "eslint . --fix"
     },
     "dependencies": {
         "@psti/database": "*",
@@ -17,9 +17,12 @@
         "react-dom": "^19.0.0"
     },
     "devDependencies": {
+        "@psti/eslint-config": "*",
         "@types/node": "^22.10.1",
         "@types/react": "^19.0.2",
         "@types/react-dom": "^19.0.2",
+        "eslint": "^9.16.0",
+        "eslint-config-next": "^16.0.3",
         "typescript": "^5.7.2"
     }
 }
