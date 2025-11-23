@@ -12,7 +12,7 @@
 We take security seriously. If you discover a vulnerability, please report it responsibly.
 
 1.  **Do not** open a public issue.
-2.  Email the security team at `security@example.com` (replace with actual email).
+2.  Email the security team at `security@psti.io`.
 3.  Include a proof of concept if possible.
 
 We will acknowledge your report within 48 hours and provide an estimated timeline for a fix.
