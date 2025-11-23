@@ -1,8 +1,8 @@
-# 🔒 psti.io - Enterprise Pastebin for Security Professionals
+# psti.io - Enterprise Pastebin for Security Professionals
 
 A production-ready, security-focused pastebin application built with modern technologies and enterprise-level security features.
 
-## 🏗️ Architecture
+## Architecture
 
 This is a Turborepo monorepo containing:
 
@@ -21,7 +21,7 @@ This is a Turborepo monorepo containing:
 - **@psti/config** - Shared configuration
 - **@psti/eslint-config** - Shared ESLint configuration
 
-## 🚀 Features
+## Features
 
 ### Core Functionality
 - ✅ Create, view, edit, and delete pastes
@@ -58,47 +58,14 @@ This is a Turborepo monorepo containing:
 - 🔑 JWT tokens
 - 🔑 API key generation
 
-## 📋 Prerequisites
+## Prerequisites
 
 - Node.js 20+
 - npm 10+
 - Supabase account
 - (Optional) Redis for distributed rate limiting
 
-## 🛠️ Setup
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/morganbarber/psti.io
-   cd psti.io
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Configure environment variables**
-   ```bash
-   cp .env.example .env
-   # Edit .env with your Supabase credentials
-   ```
-
-4. **Run database migrations**
-   ```bash
-   cd packages/database
-   # Follow Supabase migration instructions
-   ```
-
-5. **Start development servers**
-   ```bash
-   npm run dev
-   ```
-
-   This will start:
-   - Web app: http://localhost:3000
-   - API: http://localhost:3001
-   - Raw viewer: http://localhost:3002
+## [Setup](./SETUP.md)
 
 ## 📦 Build
 
