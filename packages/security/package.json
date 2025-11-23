@@ -10,7 +10,7 @@
     },
     "dependencies": {
         "@psti/config": "*",
-        "dompurify": "^3.2.2",
+        "dompurify": "^3.3.0",
         "isomorphic-dompurify": "^2.16.0"
     },
     "devDependencies": {
