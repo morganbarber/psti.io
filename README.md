@@ -67,22 +67,18 @@ This is a Turborepo monorepo containing:
 
 ## [Setup](./SETUP.md)
 
-## 📦 Build
+## Build
 
 ```bash
 npm run build
 ```
 
-## 🧪 Testing
+## Testing
 
 ```bash
 npm run test
 ```
 
-## 📝 License
+## [License](./LICENSE)
 
-MIT
-
-## 🤝 Contributing
-
-Contributions welcome! Please read our contributing guidelines first.
+## [Contributing](./CONTRIBUTING.md)
