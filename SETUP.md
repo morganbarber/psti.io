@@ -40,13 +40,16 @@ npm install
 
 ## Step 3: Configure Environment Variables
 
-Create a `.env` file in the root directory:
+Create a `.env.local` file in the **root directory** (not in individual apps):
 
 ```bash
-cp .env.example .env
+cp .env.example .env.local
 ```
 
-Edit `.env` and add your Supabase credentials:
+> [!IMPORTANT]
+> All apps in the monorepo will read from this single `.env.local` file. You do **not** need to create separate environment files for each app.
+
+Edit `.env.local` and add your Supabase credentials:
 
 ```env
 # Supabase Configuration
@@ -66,6 +69,7 @@ JWT_SECRET=$(node -e "console.log(require('crypto').randomBytes(32).toString('he
 NODE_ENV=development
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 NEXT_PUBLIC_RAW_URL=http://localhost:3002
+NEXT_PUBLIC_DOCS_URL=http://localhost:3003
 ```
 
 **Generate Encryption Keys:**
@@ -78,33 +82,20 @@ Copy the output and paste it as your `ENCRYPTION_KEY` and `JWT_SECRET`.
 
 ## Step 4: Start Development Servers
 
-Open **three terminal windows** and run:
+From the **root directory**, run:
 
-### Terminal 1: Frontend (Next.js)
-```bash
-cd apps/web
-npm run dev
-```
-This starts the main web app at http://localhost:3000
-
-### Terminal 2: API (NestJS)
-```bash
-cd apps/api
-npm run dev
-```
-This starts the API server at http://localhost:3001
-
-### Terminal 3: Raw Viewer (Next.js)
-```bash
-cd apps/raw
-npm run dev
-```
-This starts the raw paste viewer at http://localhost:3002
-
-**OR** use Turborepo to run all at once:
 ```bash
 npm run dev
 ```
+
+This will start all applications simultaneously using Turborepo:
+- **Web App** at http://localhost:3000
+- **API Server** at http://localhost:3001  
+- **Raw Viewer** at http://localhost:3002
+- **Documentation** at http://localhost:3003
+
+> [!TIP]
+> All apps automatically load environment variables from the root `.env.local` file. No need to configure each app separately!
 
 ## Step 5: Test the Application
 
@@ -169,8 +160,9 @@ pastebin/
 ## Common Issues
 
 ### "Missing Supabase environment variables"
-- Make sure you've created the `.env` file
+- Ensure `.env.local` exists in the **root directory** (not in individual app folders)
 - Verify all Supabase credentials are correct
+- **Restart the dev server** after creating or modifying `.env.local`
 
 ### "Database error" or "RLS policy violation"
 - Ensure you've run the database migration

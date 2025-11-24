@@ -7,7 +7,8 @@
         "build": "next build",
         "start": "next start -p ${PORT_WEB:-3000}",
         "lint": "eslint . --fix",
-        "type-check": "tsc --noEmit"
+        "type-check": "tsc --noEmit",
+        "deploy": "cd ../.. && npx sst deploy --filter Web"
     },
     "dependencies": {
         "@monaco-editor/react": "^4.6.0",

@@ -2,13 +2,13 @@
 
 ## Overview
 
-This project uses environment variables to configure all service ports, making deployment flexible and straightforward. Simply configure your `.env` file and start the services.
+This project uses a single `.env.local` file to configure all services, making deployment flexible and straightforward. All apps (web, api, raw, docs) read from this shared configuration file.
 
 ## Quick Start
 
 1. **Copy the environment template:**
    ```bash
-   cp .env.example .env
+   cp .env.example .env.local
    ```
 
 2. **Configure your ports** (or use defaults):
@@ -37,7 +37,7 @@ All ports are configurable via environment variables with sensible defaults:
 
 ### Using Custom Ports
 
-To use custom ports, simply set the environment variables in your `.env` file:
+To use custom ports, simply set the environment variables in your `.env.local` file:
 
 ```env
 # Example: Run all services on different ports
@@ -92,7 +92,7 @@ npm run start
 
 ### Required Variables
 
-Copy `.env.example` to `.env` and configure:
+Copy `.env.example` to `.env.local` in the root directory and configure:
 
 ```env
 # Supabase Configuration (Required)
@@ -213,16 +213,16 @@ If you see "port already in use" errors:
    lsof -i :3000
    ```
 
-2. Either stop that process or change the port in your `.env`:
+2. Either stop that process or change the port in your `.env.local`:
    ```env
    PORT_WEB=3100
    ```
 
 ### Environment Variables Not Loading
 
-1. Ensure your `.env` file is in the project root
-2. Restart your development server
-3. Check that `.env` is not in `.gitignore` (`.env.example` should be tracked, `.env` should not)
+1. Ensure your `.env.local` file is in the project root (not in individual app directories)
+2. **Restart your development server** after creating or modifying `.env.local`
+3. Check that `.env.local` is in `.gitignore` (it should not be committed)
 
 ### Services Can't Connect
 
@@ -232,7 +232,7 @@ If you see "port already in use" errors:
 
 ## Best Practices
 
-1. **Never commit `.env`**: Keep sensitive credentials out of version control
+1. **Never commit `.env.local`**: Keep sensitive credentials out of version control
 2. **Use `.env.example`**: Document all required variables for team members
 3. **Default ports**: Use the standard defaults (3000-3003) for local development
 4. **Production secrets**: Use your platform's secret management for production

@@ -3,10 +3,9 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "dev": "next dev -p ${PORT_RAW:-3002}",
-        "build": "next build",
-        "start": "next start -p ${PORT_RAW:-3002}",
-        "lint": "eslint . --fix"
+        "lint": "eslint . --fix",
+        "type-check": "tsc --noEmit",
+        "deploy": "cd ../.. && npx sst deploy --filter Raw"
     },
     "dependencies": {
         "@psti/database": "*",
