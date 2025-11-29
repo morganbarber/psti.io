@@ -18,7 +18,7 @@
     "devDependencies": {
         "@psti/eslint-config": "*",
         "@types/node": "^22.10.1",
-        "@types/react": "^19.0.2",
+        "@types/react": "^19.2.7",
         "@types/react-dom": "^19.0.2",
         "eslint": "^9.16.0",
         "eslint-config-next": "^16.0.0",
