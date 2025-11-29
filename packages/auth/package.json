@@ -16,7 +16,7 @@
     },
     "devDependencies": {
         "@psti/eslint-config": "*",
-        "@types/node": "^22.10.1",
+        "@types/node": "^24.10.1",
         "eslint": "^9.16.0",
         "typescript": "^5.7.2"
     }
