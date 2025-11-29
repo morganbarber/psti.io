@@ -17,7 +17,7 @@
         "packages/*"
     ],
     "devDependencies": {
-        "@types/node": "^22.10.1",
+        "@types/node": "^24.10.1",
         "prettier": "^3.4.2",
         "sst": "^3.17.23",
         "turbo": "^2.3.3",
