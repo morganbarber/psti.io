@@ -10,7 +10,7 @@
     },
     "dependencies": {
         "@psti/types": "*",
-        "@supabase/ssr": "^0.7.0",
+        "@supabase/ssr": "^0.8.0",
         "@supabase/supabase-js": "^2.47.10"
     },
     "devDependencies": {
