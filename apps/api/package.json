@@ -51,7 +51,7 @@
         "@types/supertest": "^6.0.2",
         "@typescript-eslint/eslint-plugin": "^8.17.0",
         "@typescript-eslint/parser": "^8.17.0",
-        "eslint": "^9.16.0",
+        "eslint": "^9.39.2",
         "jest": "^30.2.0",
         "prettier": "^3.7.3",
         "source-map-support": "^0.5.21",
