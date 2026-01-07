@@ -17,7 +17,7 @@
         "@psti/eslint-config": "*",
         "@types/dompurify": "^3.2.0",
         "@types/node": "^24.10.1",
-        "eslint": "^9.16.0",
+        "eslint": "^9.39.2",
         "typescript": "^5.7.2"
     }
 }
