@@ -20,7 +20,7 @@
         "@types/node": "^24.10.1",
         "prettier": "^3.7.3",
         "sst": "^3.17.25",
-        "turbo": "^2.3.3",
+        "turbo": "^2.7.4",
         "typescript": "5.9.3"
     },
     "engines": {
