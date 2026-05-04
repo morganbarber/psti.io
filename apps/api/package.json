@@ -23,7 +23,7 @@
         "@nestjs/core": "^11.1.9",
         "@nestjs/platform-express": "^11.1.9",
         "@nestjs/swagger": "^11.2.3",
-        "@nestjs/throttler": "^6.2.1",
+        "@nestjs/throttler": "^6.5.0",
         "@psti/config": "*",
         "@psti/database": "*",
         "@psti/security": "*",
