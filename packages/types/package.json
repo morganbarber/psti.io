@@ -12,6 +12,6 @@
         "@psti/eslint-config": "*",
         "@types/node": "^24.10.1",
         "eslint": "^9.39.2",
-        "typescript": "^5.7.2"
+        "typescript": "^6.0.3"
     }
 }
