@@ -36,12 +36,12 @@
         "eslint": "^9.39.2",
         "postcss": "^8.5.10",
         "react": "^19.0.0",
-        "react-dom": "^19.0.0",
+        "react-dom": "^19.2.5",
         "tailwindcss": "^3.4.17",
         "typescript": "^6.0.3"
     },
     "peerDependencies": {
         "react": "^19.0.0",
-        "react-dom": "^19.0.0"
+        "react-dom": "^19.2.5"
     }
 }
