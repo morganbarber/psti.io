@@ -12,13 +12,13 @@
         "@supabase/ssr": "^0.8.0",
         "@supabase/supabase-js": "^2.47.10",
         "next": "^16.2.6",
-        "react": "^19.0.0",
+        "react": "^19.2.6",
         "react-dom": "^19.2.5"
     },
     "devDependencies": {
         "@psti/eslint-config": "*",
         "@types/node": "^24.10.1",
-        "@types/react": "^19.2.7",
+        "@types/react": "^19.2.14",
         "@types/react-dom": "^19.0.2",
         "eslint": "^9.39.2",
         "eslint-config-next": "^16.0.6",

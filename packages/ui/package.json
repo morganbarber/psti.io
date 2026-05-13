@@ -30,18 +30,18 @@
     "devDependencies": {
         "@psti/eslint-config": "*",
         "@types/node": "^24.10.1",
-        "@types/react": "^19.2.7",
+        "@types/react": "^19.2.14",
         "@types/react-dom": "^19.0.2",
         "autoprefixer": "^10.4.23",
         "eslint": "^9.39.2",
         "postcss": "^8.5.14",
-        "react": "^19.0.0",
+        "react": "^19.2.6",
         "react-dom": "^19.2.5",
         "tailwindcss": "^4.2.4",
         "typescript": "^6.0.3"
     },
     "peerDependencies": {
-        "react": "^19.0.0",
+        "react": "^19.2.6",
         "react-dom": "^19.2.5"
     }
 }

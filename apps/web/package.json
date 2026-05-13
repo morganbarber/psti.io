@@ -27,7 +27,7 @@
         "highlight.js": "^11.10.0",
         "lucide-react": "^0.562.0",
         "next": "^16.2.6",
-        "react": "^19.0.0",
+        "react": "^19.2.6",
         "react-dom": "^19.2.5",
         "tailwind-merge": "^3.5.0",
         "zod": "^4.3.5"
@@ -35,7 +35,7 @@
     "devDependencies": {
         "@psti/eslint-config": "*",
         "@types/node": "^24.10.1",
-        "@types/react": "^19.2.7",
+        "@types/react": "^19.2.14",
         "@types/react-dom": "^19.0.2",
         "autoprefixer": "^10.4.23",
         "eslint": "^9.39.2",
