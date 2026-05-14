@@ -11,7 +11,7 @@
     "dependencies": {
         "@psti/config": "*",
         "dompurify": "^3.4.0",
-        "isomorphic-dompurify": "^3.12.0"
+        "isomorphic-dompurify": "^3.13.0"
     },
     "devDependencies": {
         "@psti/eslint-config": "*",
