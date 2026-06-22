@@ -19,7 +19,7 @@
     },
     "dependencies": {
         "@codegenie/serverless-express": "^5.0.0",
-        "@nestjs/common": "^11.1.9",
+        "@nestjs/common": "^11.1.27",
         "@nestjs/core": "^11.1.9",
         "@nestjs/platform-express": "^11.1.19",
         "@nestjs/swagger": "^11.4.2",
