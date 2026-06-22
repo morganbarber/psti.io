@@ -15,6 +15,6 @@
         "eslint-config-next": "^16.0.6",
         "eslint-config-prettier": "^10.1.8",
         "eslint-plugin-react": "^7.37.2",
-        "globals": "^15.14.0"
+        "globals": "^17.6.0"
     }
 }
