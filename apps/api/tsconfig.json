@@ -22,6 +22,7 @@
         "noFallthroughCasesInSwitch": false,
         "esModuleInterop": true,
         "resolveJsonModule": true,
+        "types": ["node", "jest"],
         "paths": {
             "@/*": [
                 "src/*"
@@ -29,11 +30,11 @@
         }
     },
     "include": [
-        "src/**/*"
+        "src/**/*",
+        "test/**/*"
     ],
     "exclude": [
         "node_modules",
-        "dist",
-        "test"
+        "dist"
     ]
 }
