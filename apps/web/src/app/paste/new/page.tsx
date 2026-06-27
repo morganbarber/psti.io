@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, use, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
@@ -21,13 +21,23 @@ import {
 import { SUPPORTED_LANGUAGES } from '@psti/config';
 import { PasteVisibility, PasteExpiration } from '@psti/types';
 import { Code2, Lock, Eye, EyeOff, Flame } from 'lucide-react';
-import { createPaste } from '@/lib/api';
+import { getPaste, createPaste } from '@/lib/api';
 
 // Dynamically import Monaco editor to avoid SSR issues
 const MonacoEditor = dynamic(() => import('@monaco-editor/react'), { ssr: false });
 
-export default function NewPastePage() {
+interface NewPasteProps {
+    searchParams: Promise<{
+        fork_of?: string;
+        password?: string;
+    }>;
+}
+
+export default function NewPastePage({ searchParams }: NewPasteProps) {
     const router = useRouter();
+    // In React 19 / Next 15, searchParams is a promise
+    const params = use(searchParams);
+    
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [language, setLanguage] = useState('plaintext');
@@ -36,8 +46,50 @@ export default function NewPastePage() {
     const [expiration, setExpiration] = useState<PasteExpiration | ''>('');
     const [encrypted, setEncrypted] = useState(false);
     const [burnAfterRead, setBurnAfterRead] = useState(false);
+    const [forkOf, setForkOf] = useState<string | undefined>(undefined);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+
+    useEffect(() => {
+        if (params.fork_of) {
+            setForkOf(params.fork_of);
+            loadOriginalPaste(params.fork_of, params.password);
+        }
+    }, [params]);
+
+    const loadOriginalPaste = async (id: string, pwd?: string) => {
+        try {
+            setLoading(true);
+            const response = await getPaste(id, pwd);
+            if (response.success && response.data) {
+                let pasteData = response.data;
+                
+                // Handle client-side decryption if encrypted
+                if (pasteData.encrypted) {
+                    const hash = window.location.hash.substring(1);
+                    if (hash) {
+                        try {
+                            const { decryptContent } = await import('@psti/security');
+                            pasteData.content = await decryptContent(pasteData.content, hash);
+                        } catch (err) {
+                            console.error('Decryption error:', err);
+                            setError('Failed to decrypt original paste. Key might be invalid.');
+                        }
+                    }
+                }
+                
+                setTitle(`${pasteData.title} (Fork)`);
+                setContent(pasteData.content);
+                setLanguage(pasteData.language);
+                // Inherit visibility if possible, default to public
+                setVisibility(pasteData.visibility as PasteVisibility);
+            }
+        } catch (err) {
+            console.error('Failed to load original paste:', err);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -67,6 +119,7 @@ export default function NewPastePage() {
                 encrypted,
                 encrypted_client_side: encrypted, // Signal to server that we encrypted it
                 burn_after_read: burnAfterRead,
+                fork_of: forkOf,
             };
 
             // Call the API to create the paste

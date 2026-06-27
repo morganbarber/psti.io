@@ -103,6 +103,16 @@ export class PastebinClient {
         },
 
         /**
+         * Fork an existing paste
+         */
+        fork: (id: string, password?: string): Promise<ApiResponse<Paste>> => {
+            return this.request<Paste>(`/api/v1/pastes/${id}/fork`, {
+                method: 'POST',
+                body: JSON.stringify({ password }),
+            });
+        },
+
+        /**
          * Update a paste
          */
         update: (id: string, input: UpdatePasteInput): Promise<ApiResponse<Paste>> => {

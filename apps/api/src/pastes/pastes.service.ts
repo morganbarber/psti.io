@@ -51,6 +51,7 @@ export class PastesService {
                 encrypted: createPasteDto.encrypted || false,
                 burn_after_read: createPasteDto.burn_after_read || false,
                 folder_id: createPasteDto.folder_id,
+                fork_of: createPasteDto.fork_of,
                 ...encryptionData,
             })
             .select()
@@ -183,5 +184,28 @@ export class PastesService {
         }
 
         return { success: true };
+    }
+
+    async fork(id: string, userId: string | null, password?: string) {
+        // 1. Fetch the original paste
+        const originalPaste = await this.findOne(id, password);
+
+        // 2. Prepare the new paste DTO based on the original
+        // If the original was encrypted, we just clone the raw encrypted content and the password hash
+        // Wait, findOne decrypts the content if a password is provided! 
+        // So we just re-create it with the decrypted content and the original password.
+        const createDto: CreatePasteInput = {
+            title: `${originalPaste.title} (Fork)`,
+            content: originalPaste.content,
+            language: originalPaste.language,
+            visibility: originalPaste.visibility as any,
+            password: password, // if password was required, we apply the same password
+            encrypted: originalPaste.encrypted,
+            burn_after_read: originalPaste.burn_after_read,
+            fork_of: id
+        };
+
+        // 3. Create the new paste
+        return this.create(userId, createDto);
     }
 }

@@ -28,6 +28,7 @@ export const createPasteSchema = z.object({
     encrypted_client_side: z.boolean().optional(),
     burn_after_read: z.boolean().default(false),
     folder_id: z.string().uuid().optional(),
+    fork_of: z.string().uuid().optional(),
 });
 
 // Paste update schema
@@ -52,6 +53,7 @@ export const updatePasteSchema = z.object({
     password: z.string().min(4, 'Password must be at least 4 characters').optional(),
     expiration: z.nativeEnum(PasteExpiration).optional(),
     folder_id: z.string().uuid().nullable().optional(),
+    fork_of: z.string().uuid().nullable().optional(),
 });
 
 // Paste password verification schema

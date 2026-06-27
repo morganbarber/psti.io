@@ -43,7 +43,8 @@ CREATE TABLE IF NOT EXISTS public.pastes (
   view_count INTEGER NOT NULL DEFAULT 0,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  folder_id UUID REFERENCES public.folders(id) ON DELETE SET NULL
+  folder_id UUID REFERENCES public.folders(id) ON DELETE SET NULL,
+  fork_of UUID REFERENCES public.pastes(id) ON DELETE SET NULL
 );
 
 -- Paste views tracking table

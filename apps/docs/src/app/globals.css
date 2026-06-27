@@ -1,32 +1,4 @@
-@import "tailwindcss";
-
-@theme {
-    --color-background: var(--background);
-    --color-foreground: var(--foreground);
-    --color-primary: var(--primary);
-    --color-primary-foreground: var(--primary-foreground);
-    --color-secondary: var(--secondary);
-    --color-border: var(--border);
-    --color-muted: var(--muted);
-}
-
-:root {
-    --background: hsl(225, 50%, 8%);
-    --foreground: hsl(210, 40%, 98%);
-    --primary: hsl(225, 70%, 60%);
-    --primary-foreground: hsl(210, 40%, 98%);
-    --secondary: hsl(225, 40%, 18%);
-    --border: hsl(225, 40%, 18%);
-    --muted: hsl(225, 40%, 18%);
-}
-
-body {
-    color: var(--foreground);
-    background: var(--background);
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-        sans-serif;
-}
+@import "@psti/ui/globals.css";
 
 /* MDX Styles */
 .prose {
@@ -38,7 +10,7 @@ body {
 }
 
 .prose h2 {
-    @apply text-3xl font-semibold mb-4 mt-8 text-foreground border-b border-border pb-2;
+    @apply text-3xl font-semibold mb-4 mt-8 text-foreground border-b-2 border-border pb-2;
 }
 
 .prose h3 {
@@ -54,19 +26,21 @@ body {
 }
 
 .prose a {
-    @apply text-primary hover:underline;
+    @apply text-primary hover:underline font-semibold;
 }
 
 .prose code {
-    @apply bg-muted px-1.5 py-0.5 rounded text-sm font-mono text-primary;
+    @apply bg-muted px-1.5 py-0.5 border-2 border-border text-sm font-mono text-primary;
 }
 
 .prose pre {
-    @apply bg-muted p-4 rounded-lg overflow-x-auto mb-4;
+    @apply bg-card p-4 overflow-x-auto mb-6;
+    box-shadow: 6px 6px 0px 0px hsl(var(--primary));
+    border: 2px solid hsl(var(--border));
 }
 
 .prose pre code {
-    @apply bg-transparent p-0 text-foreground;
+    @apply bg-transparent p-0 border-none shadow-none text-foreground;
 }
 
 .prose ul,
@@ -79,50 +53,54 @@ body {
 }
 
 .prose blockquote {
-    @apply border-l-4 border-primary pl-4 italic my-4 text-foreground/80;
+    @apply border-2 border-border border-l-4 border-l-primary bg-card p-4 italic my-6 text-foreground/80;
 }
 
 .prose table {
-    @apply w-full mb-4 border-collapse;
+    @apply w-full mb-6 border-collapse border-2 border-border;
 }
 
 .prose th {
-    @apply bg-secondary p-2 text-left font-semibold border border-border;
+    @apply bg-secondary p-3 text-left font-semibold border-2 border-border;
 }
 
 .prose td {
-    @apply p-2 border border-border;
+    @apply p-3 border-2 border-border bg-card;
 }
 
 .prose img {
-    @apply rounded-lg my-4;
+    @apply my-6;
+    box-shadow: 6px 6px 0px 0px hsl(var(--primary));
+    border: 2px solid hsl(var(--border));
 }
 
 .prose hr {
-    @apply my-8 border-border;
+    @apply my-8 border-t-2 border-border;
 }
 
 /* API Endpoint Styles */
 .api-endpoint {
-    @apply bg-muted p-4 rounded-lg mb-4 border border-border;
+    @apply bg-card p-4 mb-6;
+    box-shadow: 6px 6px 0px 0px hsl(var(--primary));
+    border: 2px solid hsl(var(--border));
 }
 
 .api-method {
-    @apply inline-block px-3 py-1 rounded text-sm font-semibold mr-2;
+    @apply inline-block px-3 py-1 text-sm font-bold mr-3 border-2 border-border;
 }
 
 .api-method.get {
-    @apply bg-green-500/20 text-green-400;
+    @apply bg-green-500 text-black border-green-700;
 }
 
 .api-method.post {
-    @apply bg-blue-500/20 text-blue-400;
+    @apply bg-blue-500 text-black border-blue-700;
 }
 
 .api-method.patch {
-    @apply bg-yellow-500/20 text-yellow-400;
+    @apply bg-yellow-500 text-black border-yellow-700;
 }
 
 .api-method.delete {
-    @apply bg-red-500/20 text-red-400;
+    @apply bg-red-500 text-black border-red-700;
 }

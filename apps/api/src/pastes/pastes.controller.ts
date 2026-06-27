@@ -55,6 +55,22 @@ export class PastesController {
         };
     }
 
+    @Post(':id/fork')
+    @UseGuards(OptionalAuthGuard)
+    @Throttle({ default: { limit: 10, ttl: 60000 } })
+    @ApiOperation({ summary: 'Fork a paste' })
+    async fork(
+        @Param('id') id: string,
+        @Body('password') password?: string,
+        @CurrentUser() user?: any
+    ) {
+        const paste = await this.pastesService.fork(id, user?.id || null, password);
+        return {
+            success: true,
+            data: paste,
+        };
+    }
+
     @Patch(':id')
     @UseGuards(AuthGuard)
     @ApiBearerAuth()

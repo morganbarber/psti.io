@@ -256,6 +256,17 @@ export default function PasteViewPage({ params }: PasteViewProps) {
                                 <Button
                                     variant="outline"
                                     onClick={() => {
+                                        let url = `/paste/new?fork_of=${paste.id}`;
+                                        if (password) url += `&password=${encodeURIComponent(password)}`;
+                                        if (window.location.hash) url += window.location.hash;
+                                        window.location.href = url;
+                                    }}
+                                >
+                                    Fork
+                                </Button>
+                                <Button
+                                    variant="outline"
+                                    onClick={() => {
                                         navigator.clipboard.writeText(paste.content);
                                     }}
                                     disabled={!!decryptionError}

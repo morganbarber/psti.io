@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import "@psti/ui/globals.css";
 import "./globals.css";
 import { Navigation } from "@/components/Navigation";
 
@@ -13,8 +14,8 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="en">
-            <body className="antialiased">
+        <html lang="en" className="dark">
+            <body className="antialiased bg-background text-foreground min-h-screen">
                 <div className="flex min-h-screen">
                     <Navigation />
                     <main className="flex-1 p-8 ml-64">
