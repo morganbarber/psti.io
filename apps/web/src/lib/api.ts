@@ -43,6 +43,13 @@ export async function getPaste(id: string, password?: string) {
 }
 
 /**
+ * Get all versions of a paste
+ */
+export async function getPasteVersions(id: string, password?: string) {
+    return withAuth(() => apiClient.pastes.getVersions(id, password));
+}
+
+/**
  * Get all pastes for the current user
  */
 export async function getUserPastes() {

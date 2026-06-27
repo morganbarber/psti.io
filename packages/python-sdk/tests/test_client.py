@@ -83,3 +83,22 @@ def test_fork_paste(client):
     import json
     body = json.loads(req.body)
     assert body["password"] == "secret"
+
+@responses.activate
+def test_get_paste_versions(client):
+    mock_response = {
+        "success": True,
+        "data": [{"id": "v1", "content": "hello"}]
+    }
+    
+    responses.add(
+        responses.GET,
+        "https://api.example.com/api/v1/pastes/old-id/versions?password=secret",
+        json=mock_response,
+        status=200
+    )
+    
+    result = client.get_paste_versions("old-id", "secret")
+    
+    assert result == mock_response
+    assert len(responses.calls) == 1

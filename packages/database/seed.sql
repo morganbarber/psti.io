@@ -56,6 +56,20 @@ CREATE TABLE IF NOT EXISTS public.paste_views (
   viewed_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+-- Paste versions table
+CREATE TABLE IF NOT EXISTS public.paste_versions (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  paste_id UUID NOT NULL REFERENCES public.pastes(id) ON DELETE CASCADE,
+  title TEXT NOT NULL,
+  content TEXT NOT NULL,
+  language TEXT NOT NULL DEFAULT 'plaintext',
+  encrypted BOOLEAN NOT NULL DEFAULT FALSE,
+  encryption_iv TEXT,
+  encryption_auth_tag TEXT,
+  encryption_salt TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
 -- Indexes for performance
 CREATE INDEX IF NOT EXISTS idx_pastes_user_id ON public.pastes(user_id);
 CREATE INDEX IF NOT EXISTS idx_pastes_visibility ON public.pastes(visibility);
@@ -64,9 +78,32 @@ CREATE INDEX IF NOT EXISTS idx_pastes_expires_at ON public.pastes(expires_at) WH
 CREATE INDEX IF NOT EXISTS idx_pastes_folder_id ON public.pastes(folder_id);
 CREATE INDEX IF NOT EXISTS idx_folders_user_id ON public.folders(user_id);
 CREATE INDEX IF NOT EXISTS idx_paste_views_paste_id ON public.paste_views(paste_id);
+CREATE INDEX IF NOT EXISTS idx_paste_versions_paste_id ON public.paste_versions(paste_id);
+CREATE INDEX IF NOT EXISTS idx_paste_versions_created_at ON public.paste_versions(created_at DESC);
 
 -- Full text search index for paste content
 CREATE INDEX IF NOT EXISTS idx_pastes_content_search ON public.pastes USING gin(to_tsvector('english', title || ' ' || content));
+
+-- Version tracking trigger
+CREATE OR REPLACE FUNCTION save_paste_version()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF TG_OP = 'INSERT' OR 
+     (TG_OP = 'UPDATE' AND (
+        OLD.content IS DISTINCT FROM NEW.content OR 
+        OLD.title IS DISTINCT FROM NEW.title OR 
+        OLD.language IS DISTINCT FROM NEW.language
+     )) THEN
+    INSERT INTO public.paste_versions (paste_id, title, content, language, encrypted, encryption_iv, encryption_auth_tag, encryption_salt, created_at)
+    VALUES (NEW.id, NEW.title, NEW.content, NEW.language, NEW.encrypted, NEW.encryption_iv, NEW.encryption_auth_tag, NEW.encryption_salt, NOW());
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER on_paste_version_changed
+  AFTER INSERT OR UPDATE ON public.pastes
+  FOR EACH ROW EXECUTE FUNCTION save_paste_version();
 
 -- Updated at trigger function
 CREATE OR REPLACE FUNCTION update_updated_at_column()
@@ -194,5 +231,22 @@ CREATE POLICY "Users can view their own paste views"
       SELECT 1 FROM public.pastes
       WHERE pastes.id = paste_views.paste_id
       AND pastes.user_id = auth.uid()
+    )
+  );
+
+-- RLS Policies for paste_versions table
+ALTER TABLE public.paste_versions ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view versions if they have access to parent paste"
+  ON public.paste_versions FOR SELECT
+  USING (
+    EXISTS (
+      SELECT 1 FROM public.pastes
+      WHERE pastes.id = paste_versions.paste_id
+      AND (
+        (pastes.visibility = 'public' AND (pastes.expires_at IS NULL OR pastes.expires_at > NOW())) OR
+        (pastes.visibility = 'unlisted' AND (pastes.expires_at IS NULL OR pastes.expires_at > NOW())) OR
+        (pastes.visibility = 'private' AND auth.uid() = pastes.user_id AND (pastes.expires_at IS NULL OR pastes.expires_at > NOW()))
+      )
     )
   );

@@ -1,5 +1,5 @@
 import { CreatePasteInput, UpdatePasteInput } from '@psti/validation';
-import { Paste, ApiResponse } from '@psti/types';
+import { Paste, PasteVersion, ApiResponse } from '@psti/types';
 
 export interface PastebinClientConfig {
     baseUrl: string;
@@ -109,6 +109,16 @@ export class PastebinClient {
             return this.request<Paste>(`/api/v1/pastes/${id}/fork`, {
                 method: 'POST',
                 body: JSON.stringify({ password }),
+            });
+        },
+
+        /**
+         * Get all versions of a paste
+         */
+        getVersions: (id: string, password?: string): Promise<ApiResponse<PasteVersion[]>> => {
+            const queryParams = password ? `?password=${encodeURIComponent(password)}` : '';
+            return this.request<PasteVersion[]>(`/api/v1/pastes/${id}/versions${queryParams}`, {
+                method: 'GET',
             });
         },
 

@@ -64,7 +64,7 @@ export class PastesService {
         return data;
     }
 
-    async findOne(id: string, password?: string) {
+    private async verifyAccess(id: string, password?: string) {
         const { data, error } = await this.supabase
             .from('pastes')
             .select('*')
@@ -75,7 +75,6 @@ export class PastesService {
             throw new NotFoundException('Paste not found');
         }
 
-        // Use a mutable copy since we may modify content after decryption
         const paste = { ...(data as Database['public']['Tables']['pastes']['Row']) };
 
         // Check if expired
@@ -94,6 +93,12 @@ export class PastesService {
                 throw new ForbiddenException('Invalid password');
             }
         }
+
+        return paste;
+    }
+
+    async findOne(id: string, password?: string) {
+        const paste = await this.verifyAccess(id, password);
 
         // Decrypt content if encrypted AND we have server-side encryption data
         if (paste.encrypted && password && paste.encryption_iv) {
@@ -122,6 +127,43 @@ export class PastesService {
         }
 
         return paste;
+    }
+
+    async findVersions(id: string, password?: string) {
+        // First verify access to the parent paste
+        const paste = await this.verifyAccess(id, password);
+
+        const { data, error } = await (this.supabase
+            .from('paste_versions')
+            .select('*')
+            .eq('paste_id', id)
+            .order('created_at', { ascending: false }) as any);
+
+        if (error) {
+            throw new Error(error.message);
+        }
+
+        // Decrypt versions if needed
+        return data.map((version) => {
+            if (version.encrypted && password && version.encryption_iv) {
+                try {
+                    const decrypted = decrypt(
+                        {
+                            encrypted: version.content,
+                            iv: version.encryption_iv,
+                            authTag: version.encryption_auth_tag!,
+                            salt: version.encryption_salt!,
+                        },
+                        password
+                    );
+                    version.content = decrypted;
+                } catch (e) {
+                    // Ignore decryption failure for versions (might have used a different key)
+                    console.error('Failed to decrypt version', version.id);
+                }
+            }
+            return version;
+        });
     }
 
     async findAll(userId: string) {

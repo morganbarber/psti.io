@@ -14,6 +14,7 @@ describe('PastesController (e2e)', () => {
         update: jest.fn(),
         remove: jest.fn(),
         fork: jest.fn(),
+        findVersions: jest.fn(),
     };
 
     beforeEach(async () => {
@@ -112,6 +113,19 @@ describe('PastesController (e2e)', () => {
             .post('/pastes/1/fork')
             .send({ password: 'secret' })
             .expect(201)
+            .expect({
+                success: true,
+                data: result,
+            });
+    });
+
+    it('/pastes/:id/versions (GET)', () => {
+        const result = [{ id: 'v1', content: 'version 1 content' }];
+        pastesService.findVersions.mockResolvedValue(result);
+
+        return request(app.getHttpServer())
+            .get('/pastes/1/versions')
+            .expect(200)
             .expect({
                 success: true,
                 data: result,

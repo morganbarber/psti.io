@@ -55,6 +55,16 @@ export class PastesController {
         };
     }
 
+    @Get(':id/versions')
+    @ApiOperation({ summary: 'Get paste versions by ID' })
+    async findVersions(@Param('id') id: string, @Query('password') password?: string) {
+        const versions = await this.pastesService.findVersions(id, password);
+        return {
+            success: true,
+            data: versions,
+        };
+    }
+
     @Post(':id/fork')
     @UseGuards(OptionalAuthGuard)
     @Throttle({ default: { limit: 10, ttl: 60000 } })

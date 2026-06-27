@@ -89,4 +89,22 @@ describe('PastebinClient', () => {
         );
         expect(result.data).toEqual(mockPaste);
     });
+
+    it('should get paste versions', async () => {
+        const mockVersions = [{ id: 'v1', content: 'test' }];
+        (global.fetch as jest.Mock).mockResolvedValueOnce({
+            ok: true,
+            json: async () => ({ success: true, data: mockVersions }),
+        });
+
+        const result = await client.pastes.getVersions('old-id', 'secret');
+
+        expect(global.fetch).toHaveBeenCalledWith(
+            `${mockBaseUrl}/api/v1/pastes/old-id/versions?password=secret`,
+            expect.objectContaining({
+                method: 'GET',
+            })
+        );
+        expect(result.data).toEqual(mockVersions);
+    });
 });

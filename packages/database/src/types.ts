@@ -143,6 +143,44 @@ export interface Database {
                     viewed_at?: string;
                 };
             };
+            paste_versions: {
+                Row: {
+                    id: string;
+                    paste_id: string;
+                    title: string;
+                    content: string;
+                    language: string;
+                    encrypted: boolean;
+                    encryption_iv: string | null;
+                    encryption_auth_tag: string | null;
+                    encryption_salt: string | null;
+                    created_at: string;
+                };
+                Insert: {
+                    id?: string;
+                    paste_id: string;
+                    title: string;
+                    content: string;
+                    language: string;
+                    encrypted?: boolean;
+                    encryption_iv?: string | null;
+                    encryption_auth_tag?: string | null;
+                    encryption_salt?: string | null;
+                    created_at?: string;
+                };
+                Update: {
+                    id?: string;
+                    paste_id?: string;
+                    title?: string;
+                    content?: string;
+                    language?: string;
+                    encrypted?: boolean;
+                    encryption_iv?: string | null;
+                    encryption_auth_tag?: string | null;
+                    encryption_salt?: string | null;
+                    created_at?: string;
+                };
+            };
         };
         Views: {
             [_ in never]: never;

@@ -12,9 +12,10 @@ import {
     CardHeader,
     CardTitle,
 } from '@psti/ui';
-import { getPaste } from '@/lib/api';
+import { getPaste, getPasteVersions } from '@/lib/api';
 import { decryptContent } from '@psti/security';
-import { Code2, Lock, Eye, Calendar, Flame, ArrowLeft, AlertTriangle } from 'lucide-react';
+import { PasteVersion } from '@psti/types';
+import { Code2, Lock, Eye, Calendar, Flame, ArrowLeft, AlertTriangle, History } from 'lucide-react';
 
 const MonacoEditor = dynamic(() => import('@monaco-editor/react'), { ssr: false });
 
@@ -27,6 +28,8 @@ interface PasteViewProps {
 export default function PasteViewPage({ params }: PasteViewProps) {
     const { id } = use(params);
     const [paste, setPaste] = useState<any>(null);
+    const [versions, setVersions] = useState<PasteVersion[]>([]);
+    const [selectedVersionId, setSelectedVersionId] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [password, setPassword] = useState('');
@@ -81,6 +84,12 @@ export default function PasteViewPage({ params }: PasteViewProps) {
 
                 setPaste(pasteData);
                 setRequiresPassword(false);
+                
+                // Fetch versions
+                const versionsRes = await getPasteVersions(id, pwd);
+                if (versionsRes.success && versionsRes.data) {
+                    setVersions(versionsRes.data);
+                }
             }
         } catch (err: any) {
             setError(err.message || 'Failed to load paste');
@@ -197,6 +206,10 @@ export default function PasteViewPage({ params }: PasteViewProps) {
         return null;
     }
 
+    const currentDisplayPaste = selectedVersionId 
+        ? versions.find(v => v.id === selectedVersionId) || paste 
+        : paste;
+
     return (
         <div className="flex min-h-screen flex-col">
             {/* Header */}
@@ -224,11 +237,11 @@ export default function PasteViewPage({ params }: PasteViewProps) {
                     <div className="mb-6">
                         <div className="mb-2 flex items-start justify-between">
                             <div>
-                                <h1 className="text-3xl font-bold">{paste.title}</h1>
+                                <h1 className="text-3xl font-bold">{currentDisplayPaste.title}</h1>
                                 <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
                                     <span className="flex items-center">
                                         <Code2 className="mr-1 h-4 w-4" />
-                                        {paste.language}
+                                        {currentDisplayPaste.language}
                                     </span>
                                     <span className="flex items-center">
                                         <Eye className="mr-1 h-4 w-4" />
@@ -236,9 +249,9 @@ export default function PasteViewPage({ params }: PasteViewProps) {
                                     </span>
                                     <span className="flex items-center">
                                         <Calendar className="mr-1 h-4 w-4" />
-                                        {new Date(paste.created_at).toLocaleDateString()}
+                                        {new Date(currentDisplayPaste.created_at).toLocaleDateString()}
                                     </span>
-                                    {paste.encrypted && !decryptionError && (
+                                    {currentDisplayPaste.encrypted && !decryptionError && (
                                         <span className="flex items-center text-primary">
                                             <Lock className="mr-1 h-4 w-4" />
                                             Encrypted
@@ -252,7 +265,24 @@ export default function PasteViewPage({ params }: PasteViewProps) {
                                     )}
                                 </div>
                             </div>
-                            <div className="flex gap-2">
+                            <div className="flex gap-2 items-center">
+                                {versions.length > 0 && (
+                                    <div className="flex items-center mr-2">
+                                        <History className="mr-2 h-4 w-4 text-muted-foreground" />
+                                        <select 
+                                            className="h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
+                                            value={selectedVersionId || ''}
+                                            onChange={(e) => setSelectedVersionId(e.target.value || null)}
+                                        >
+                                            <option value="">Current Version</option>
+                                            {versions.map((v, i) => (
+                                                <option key={v.id} value={v.id}>
+                                                    Version {versions.length - i} ({new Date(v.created_at).toLocaleString()})
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                )}
                                 <Button
                                     variant="outline"
                                     onClick={() => {
@@ -267,7 +297,7 @@ export default function PasteViewPage({ params }: PasteViewProps) {
                                 <Button
                                     variant="outline"
                                     onClick={() => {
-                                        navigator.clipboard.writeText(paste.content);
+                                        navigator.clipboard.writeText(currentDisplayPaste.content);
                                     }}
                                     disabled={!!decryptionError}
                                 >
@@ -276,11 +306,11 @@ export default function PasteViewPage({ params }: PasteViewProps) {
                                 <Button
                                     variant="outline"
                                     onClick={() => {
-                                        const blob = new Blob([paste.content], { type: 'text/plain' });
+                                        const blob = new Blob([currentDisplayPaste.content], { type: 'text/plain' });
                                         const url = URL.createObjectURL(blob);
                                         const a = document.createElement('a');
                                         a.href = url;
-                                        a.download = `${paste.title}.${paste.language}`;
+                                        a.download = `${currentDisplayPaste.title}.${currentDisplayPaste.language}`;
                                         a.click();
                                         URL.revokeObjectURL(url);
                                     }}
@@ -299,6 +329,14 @@ export default function PasteViewPage({ params }: PasteViewProps) {
                             {decryptionError}
                         </div>
                     )}
+                    
+                    {/* Version Notice */}
+                    {selectedVersionId && (
+                        <div className="mb-6 rounded-md bg-yellow-500/10 p-4 text-yellow-500 flex items-center border border-yellow-500/20">
+                            <History className="h-5 w-5 mr-2" />
+                            You are viewing an older version of this paste from {new Date(currentDisplayPaste.created_at).toLocaleString()}.
+                        </div>
+                    )}
 
                     {/* Code Editor */}
                     <div className="h-[600px] overflow-hidden rounded-md border border-border relative">
@@ -312,9 +350,9 @@ export default function PasteViewPage({ params }: PasteViewProps) {
                         )}
                         <MonacoEditor
                             height="600px"
-                            language={paste.language}
+                            language={currentDisplayPaste.language}
                             theme="vs-dark"
-                            value={decryptionError ? 'Encrypted Content' : paste.content}
+                            value={decryptionError ? 'Encrypted Content' : currentDisplayPaste.content}
                             options={{
                                 readOnly: true,
                                 minimap: { enabled: true },

@@ -39,6 +39,18 @@ export interface Paste {
     created_at: string;
     updated_at: string;
     folder_id: string | null;
+    fork_of?: string | null;
+}
+
+// Paste version interface
+export interface PasteVersion {
+    id: string;
+    paste_id: string;
+    title: string;
+    content: string;
+    language: string;
+    encrypted: boolean;
+    created_at: string;
 }
 
 // Paste creation request

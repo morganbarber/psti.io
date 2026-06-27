@@ -57,6 +57,13 @@ class PastebinClient:
     def fork_paste(self, paste_id: str, password: Optional[str] = None) -> Dict[str, Any]:
         payload = {"password": password} if password else {}
         return self._request("POST", f"/pastes/{paste_id}/fork", json=payload)
+        
+    def get_paste_versions(self, paste_id: str, password: Optional[str] = None) -> Dict[str, Any]:
+        """Get the version history of a paste by its ID."""
+        params = {}
+        if password:
+            params["password"] = password
+        return self._request("GET", f"/pastes/{paste_id}/versions", params=params)
 
     def update_paste(self, paste_id: str, data: Dict[str, Any]) -> Dict[str, Any]:
         return self._request("PATCH", f"/pastes/{paste_id}", json=data)
