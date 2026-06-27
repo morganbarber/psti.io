@@ -1,0 +1,26 @@
+{
+  "name": "@psti/sdk",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc -w",
+    "lint": "eslint \"src/**/*.ts\"",
+    "clean": "rm -rf dist",
+    "test": "jest --passWithNoTests"
+  },
+  "dependencies": {
+    "@psti/types": "*",
+    "@psti/validation": "*"
+  },
+  "devDependencies": {
+    "@psti/eslint-config": "*",
+    "@types/jest": "^30.0.0",
+    "eslint": "^9.39.4",
+    "jest": "^30.4.2",
+    "ts-jest": "^29.4.11",
+    "typescript": "6.0.3"
+  }
+}

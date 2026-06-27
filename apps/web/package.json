@@ -15,6 +15,7 @@
         "@psti/auth": "*",
         "@psti/config": "*",
         "@psti/database": "*",
+        "@psti/sdk": "*",
         "@psti/security": "*",
         "@psti/types": "*",
         "@psti/ui": "*",

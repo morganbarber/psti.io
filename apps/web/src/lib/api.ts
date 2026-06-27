@@ -1,115 +1,64 @@
-import { CreatePasteInput, UpdatePasteInput } from '@psti/validation';
-import { Paste, ApiResponse } from '@psti/types';
-import { createClient } from './supabase/client';
+import { PastebinClient } from '@psti/sdk';
+import { createClient as createSupabaseClient } from './supabase/client';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
+// Create a singleton instance of the client
+export const apiClient = new PastebinClient({ baseUrl: API_BASE_URL });
+
 /**
  * Get the authorization token from Supabase session
+ * and inject it into the API client.
  */
-async function getAuthToken(): Promise<string | null> {
-    const supabase = createClient();
+async function injectAuthToken() {
+    const supabase = createSupabaseClient();
     const { data: { session } } = await supabase.auth.getSession();
-    return session?.access_token || null;
+    if (session?.access_token) {
+        apiClient.setToken(session.access_token);
+    } else {
+        apiClient.clearToken();
+    }
 }
 
 /**
- * Make an authenticated API request
+ * Wrap API calls to ensure token is injected
  */
-async function apiRequest<T>(
-    endpoint: string,
-    options: RequestInit = {}
-): Promise<ApiResponse<T>> {
-    try {
-        const token = await getAuthToken();
-        const headers: Record<string, string> = {
-            'Content-Type': 'application/json',
-        };
-
-        // Merge any provided headers
-        if (options.headers) {
-            const optionsHeaders = new Headers(options.headers);
-            optionsHeaders.forEach((value, key) => {
-                headers[key] = value;
-            });
-        }
-
-        // Add authorization header if token is available
-        if (token) {
-            headers['Authorization'] = `Bearer ${token}`;
-        }
-
-        const response = await fetch(`${API_BASE_URL}/api/v1${endpoint}`, {
-            ...options,
-            headers,
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-            if (data.message == "Password required") {
-                return {
-                    success: false,
-                    error: data.message,
-                };
-            }
-            throw new Error(data.message || `API error: ${response.status}`);
-        }
-
-        return data;
-    } catch (error: any) {
-        console.error('API request error:', error);
-        return {
-            success: false,
-            error: error.message || 'An unexpected error occurred',
-        };
-    }
+async function withAuth<T>(apiCall: () => Promise<T>): Promise<T> {
+    await injectAuthToken();
+    return apiCall();
 }
 
 /**
  * Create a new paste
  */
-export async function createPaste(input: CreatePasteInput): Promise<ApiResponse<Paste>> {
-    return apiRequest<Paste>('/pastes', {
-        method: 'POST',
-        body: JSON.stringify(input),
-    });
+export async function createPaste(input: Parameters<typeof apiClient.pastes.create>[0]) {
+    return withAuth(() => apiClient.pastes.create(input));
 }
 
 /**
  * Get a paste by ID
  */
-export async function getPaste(id: string, password?: string): Promise<ApiResponse<Paste>> {
-    const queryParams = password ? `?password=${encodeURIComponent(password)}` : '';
-    return apiRequest<Paste>(`/pastes/${id}${queryParams}`, {
-        method: 'GET',
-    });
+export async function getPaste(id: string, password?: string) {
+    return withAuth(() => apiClient.pastes.get(id, password));
 }
 
 /**
  * Get all pastes for the current user
  */
-export async function getUserPastes(): Promise<ApiResponse<Paste[]>> {
-    return apiRequest<Paste[]>('/pastes', {
-        method: 'GET',
-    });
+export async function getUserPastes() {
+    return withAuth(() => apiClient.pastes.list());
 }
 
 /**
  * Update a paste
  */
-export async function updatePaste(id: string, input: UpdatePasteInput): Promise<ApiResponse<Paste>> {
-    return apiRequest<Paste>(`/pastes/${id}`, {
-        method: 'PATCH',
-        body: JSON.stringify(input),
-    });
+export async function updatePaste(id: string, input: Parameters<typeof apiClient.pastes.update>[1]) {
+    return withAuth(() => apiClient.pastes.update(id, input));
 }
 
 /**
  * Delete a paste
  */
-export async function deletePaste(id: string): Promise<ApiResponse<{ success: boolean }>> {
-    return apiRequest<{ success: boolean }>(`/pastes/${id}`, {
-        method: 'DELETE',
-    });
+export async function deletePaste(id: string) {
+    return withAuth(() => apiClient.pastes.delete(id));
 }
