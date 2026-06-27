@@ -7,12 +7,27 @@ on:
   pull_request:
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      python: ${{ steps.filter.outputs.python }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            python:
+              - 'packages/python-sdk/**'
+
   test-js:
     name: Run Node.js Tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -24,10 +39,17 @@ jobs:
         run: npm ci
 
       - name: Run JS/TS Tests
-        run: npm run test
+        run: |
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            npx turbo run test --filter="...[origin/main]"
+          else
+            npx turbo run test --filter="...[HEAD^1]"
+          fi
 
   test-python:
     name: Run Python Tests
+    needs: changes
+    if: ${{ needs.changes.outputs.python == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
