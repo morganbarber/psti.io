@@ -9,19 +9,20 @@
     },
     "dependencies": {
         "@psti/database": "*",
-        "@supabase/ssr": "^0.8.0",
-        "@supabase/supabase-js": "^2.47.10",
-        "next": "^16.2.6",
-        "react": "^19.0.0",
-        "react-dom": "^19.2.5"
+        "@supabase/ssr": "^0.12.0",
+        "@supabase/supabase-js": "^2.108.2",
+        "@tailwindcss/postcss": "^4.3.1",
+        "next": "^16.2.9",
+        "react": "^19.2.7",
+        "react-dom": "^19.2.7"
     },
     "devDependencies": {
         "@psti/eslint-config": "*",
-        "@types/node": "^24.10.1",
-        "@types/react": "^19.2.7",
-        "@types/react-dom": "^19.0.2",
-        "eslint": "^9.39.2",
-        "eslint-config-next": "^16.0.6",
+        "@types/node": "^26.0.1",
+        "@types/react": "^19.2.17",
+        "@types/react-dom": "^19.2.3",
+        "eslint": "^9.39.4",
+        "eslint-config-next": "^16.2.9",
         "typescript": "6.0.3"
     }
 }

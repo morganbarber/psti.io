@@ -38,31 +38,42 @@ const faqs = [
 
 export function FAQ() {
     return (
-        <section className="py-24 bg-muted/30">
-            <div className="container mx-auto px-4">
-                <div className="text-center max-w-3xl mx-auto mb-16">
-                    <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                        Frequently Asked Questions
-                    </h2>
-                    <p className="text-muted-foreground text-lg">
+        <section className="py-24 bg-background border-b-4 border-border relative">
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,#333_1px,transparent_1px),linear-gradient(to_bottom,#333_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:linear-gradient(to_top,transparent,black,transparent)] opacity-10 pointer-events-none" />
+            <div className="container mx-auto px-4 relative z-10">
+                <div className="text-center max-w-4xl mx-auto mb-20">
+                    <motion.h2 
+                        initial={{ opacity: 0, y: -20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, margin: "-100px" }}
+                        className="text-5xl md:text-7xl font-black uppercase tracking-tighter mb-6 text-white"
+                    >
+                        FAQ
+                    </motion.h2>
+                    <motion.p 
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        viewport={{ once: true }}
+                        className="text-muted-foreground font-mono text-xl border-b-4 border-primary pb-4 inline-block"
+                    >
                         Have questions? We have answers.
-                    </p>
+                    </motion.p>
                 </div>
 
                 <motion.div
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 0, y: 50 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
-                    viewport={{ once: true }}
+                    transition={{ type: "spring", stiffness: 200, damping: 20 }}
+                    viewport={{ once: true, margin: "-50px" }}
                     className="max-w-3xl mx-auto"
                 >
-                    <Accordion type="single" collapsible className="w-full">
+                    <Accordion type="single" collapsible className="w-full space-y-4">
                         {faqs.map((faq, index) => (
-                            <AccordionItem key={index} value={`item-${index}`}>
-                                <AccordionTrigger className="text-left text-lg">
+                            <AccordionItem key={index} value={`item-${index}`} className="brutal-border bg-card brutal-shadow hover:-translate-y-1 transition-transform duration-200">
+                                <AccordionTrigger className="text-left text-xl font-bold uppercase px-6 py-4 hover:no-underline">
                                     {faq.question}
                                 </AccordionTrigger>
-                                <AccordionContent className="text-muted-foreground">
+                                <AccordionContent className="text-muted-foreground font-mono text-base px-6 pb-6 pt-0 leading-relaxed border-t-2 border-border pt-4">
                                     {faq.answer}
                                 </AccordionContent>
                             </AccordionItem>

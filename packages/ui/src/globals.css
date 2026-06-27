@@ -1,53 +1,77 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
 
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
 @layer base {
     :root {
-        /* Light theme - clean and minimal */
-        --background: 0 0% 100%;
-        --foreground: 222.2 84% 4.9%;
-        --card: 0 0% 100%;
-        --card-foreground: 222.2 84% 4.9%;
-        --popover: 0 0% 100%;
-        --popover-foreground: 222.2 84% 4.9%;
-        --primary: 221.2 83.2% 53.3%;
-        --primary-foreground: 210 40% 98%;
-        --secondary: 210 40% 96.1%;
-        --secondary-foreground: 222.2 47.4% 11.2%;
-        --muted: 210 40% 96.1%;
-        --muted-foreground: 215.4 16.3% 46.9%;
-        --accent: 210 40% 96.1%;
-        --accent-foreground: 222.2 47.4% 11.2%;
-        --destructive: 0 84.2% 60.2%;
-        --destructive-foreground: 210 40% 98%;
-        --border: 214.3 31.8% 91.4%;
-        --input: 214.3 31.8% 91.4%;
-        --ring: 221.2 83.2% 53.3%;
-        --radius: 0.5rem;
+        /* Neo-Brutalist Dark Theme (Forced Default) */
+        --background: 0 0% 3%;
+        --foreground: 0 0% 100%;
+        --card: 0 0% 5%;
+        --card-foreground: 0 0% 100%;
+        --popover: 0 0% 5%;
+        --popover-foreground: 0 0% 100%;
+        --primary: 173 100% 50%; /* Electric Cyan */
+        --primary-foreground: 0 0% 0%;
+        --secondary: 0 0% 15%;
+        --secondary-foreground: 0 0% 100%;
+        --muted: 0 0% 15%;
+        --muted-foreground: 0 0% 70%;
+        --accent: 173 100% 50%;
+        --accent-foreground: 0 0% 0%;
+        --destructive: 0 100% 50%;
+        --destructive-foreground: 0 0% 100%;
+        --border: 0 0% 30%;
+        --input: 0 0% 20%;
+        --ring: 173 100% 50%;
+        --radius: 0rem;
     }
 
     .dark {
-        /* Dark theme - solid dark blue */
-        --background: 225 50% 8%;
-        --foreground: 210 40% 98%;
-        --card: 225 50% 8%;
-        --card-foreground: 210 40% 98%;
-        --popover: 225 50% 8%;
-        --popover-foreground: 210 40% 98%;
-        --primary: 225 70% 60%;
-        --primary-foreground: 210 40% 98%;
-        --secondary: 225 40% 18%;
-        --secondary-foreground: 210 40% 98%;
-        --muted: 225 40% 18%;
-        --muted-foreground: 215 20% 65%;
-        --accent: 225 40% 18%;
-        --accent-foreground: 210 40% 98%;
-        --destructive: 0 62.8% 30.6%;
-        --destructive-foreground: 210 40% 98%;
-        --border: 225 40% 18%;
-        --input: 225 40% 18%;
-        --ring: 225 70% 60%;
+        /* Keep it the same as root since we force dark neo-brutalist */
+        --background: 0 0% 3%;
+        --foreground: 0 0% 100%;
+        --card: 0 0% 5%;
+        --card-foreground: 0 0% 100%;
+        --popover: 0 0% 5%;
+        --popover-foreground: 0 0% 100%;
+        --primary: 173 100% 50%;
+        --primary-foreground: 0 0% 0%;
+        --secondary: 0 0% 15%;
+        --secondary-foreground: 0 0% 100%;
+        --muted: 0 0% 15%;
+        --muted-foreground: 0 0% 70%;
+        --accent: 173 100% 50%;
+        --accent-foreground: 0 0% 0%;
+        --destructive: 0 100% 50%;
+        --destructive-foreground: 0 0% 100%;
+        --border: 0 0% 30%;
+        --input: 0 0% 20%;
+        --ring: 173 100% 50%;
+        --radius: 0rem;
     }
 }
 
@@ -106,13 +130,37 @@
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    /* Glassmorphism effect */
-    .glass {
-        @apply bg-background/80 backdrop-blur-md border border-border/50;
+    /* Neo-Brutalist Utilities */
+    .brutal-shadow {
+        box-shadow: 6px 6px 0px 0px hsl(var(--primary));
+        border: 2px solid hsl(var(--border));
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
 
-    /* Gradient text */
+    .brutal-shadow:hover {
+        transform: translate(2px, 2px);
+        box-shadow: 4px 4px 0px 0px hsl(var(--primary));
+    }
+
+    .brutal-shadow:active {
+        transform: translate(6px, 6px);
+        box-shadow: 0px 0px 0px 0px hsl(var(--primary));
+    }
+
+    .brutal-card {
+        @apply bg-card border-2 border-border;
+        box-shadow: 8px 8px 0px 0px #000; /* Deep black shadow for cards */
+    }
+
+    .brutal-border {
+        border: 2px solid hsl(var(--border));
+    }
+
+    .glass {
+        @apply bg-background/80 backdrop-blur-md border-2 border-border;
+    }
+
     .gradient-text {
-        @apply bg-gradient-to-r from-primary to-primary/50 bg-clip-text text-transparent;
+        @apply bg-gradient-to-br from-white to-gray-500 bg-clip-text text-transparent;
     }
 }

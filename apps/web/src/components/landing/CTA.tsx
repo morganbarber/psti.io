@@ -7,47 +7,49 @@ import { ArrowRight } from 'lucide-react';
 
 export function CTA() {
     return (
-        <section className="py-24 relative overflow-hidden">
-            <div className="absolute inset-0 bg-primary/5" />
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-7xl pointer-events-none">
-                <div className="absolute top-1/2 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-[100px]" />
+        <section className="py-32 relative bg-primary border-b-4 border-border overflow-hidden">
+            {/* Brutalist geometric accents */}
+            <div className="absolute inset-0 pointer-events-none">
+                <div className="absolute top-0 left-0 w-full h-4 bg-black/10" />
+                <div className="absolute bottom-0 right-0 w-32 h-32 border-l-8 border-t-8 border-black/20" />
+                <div className="absolute top-10 left-10 w-16 h-16 bg-black/10 rounded-full" />
             </div>
 
             <div className="container mx-auto px-4 relative z-10">
-                <div className="max-w-4xl mx-auto text-center">
+                <div className="max-w-4xl mx-auto text-center bg-card brutal-border p-12 brutal-shadow">
                     <motion.h2
-                        initial={{ opacity: 0, y: 20 }}
+                        initial={{ opacity: 0, y: 50 }}
                         whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5 }}
-                        viewport={{ once: true }}
-                        className="text-4xl md:text-5xl font-bold mb-6"
+                        transition={{ type: "spring", stiffness: 200, damping: 20 }}
+                        viewport={{ once: true, margin: "-100px" }}
+                        className="text-5xl md:text-7xl font-black uppercase tracking-tighter mb-6 text-white"
                     >
-                        Ready to Secure Your Code?
+                        Ready to <span className="text-primary brutal-text-shadow">Secure</span> Your Code?
                     </motion.h2>
                     <motion.p
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: 0.1 }}
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        transition={{ duration: 0.5, delay: 0.2 }}
                         viewport={{ once: true }}
-                        className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto"
+                        className="text-xl font-mono text-muted-foreground mb-10 max-w-2xl mx-auto"
                     >
                         Join thousands of developers and security professionals who trust psti.io for their sensitive code sharing needs.
                     </motion.p>
                     <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: 0.2 }}
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        transition={{ type: "spring", stiffness: 200, damping: 20, delay: 0.3 }}
                         viewport={{ once: true }}
-                        className="flex flex-col sm:flex-row justify-center gap-4"
+                        className="flex flex-col sm:flex-row justify-center gap-6"
                     >
                         <Link href="/signup">
-                            <Button size="lg" className="h-14 px-8 text-lg">
+                            <Button size="lg" className="h-16 px-10 text-xl font-bold uppercase rounded-none brutal-shadow bg-primary text-black hover:bg-primary">
                                 Get Started for Free
-                                <ArrowRight className="ml-2 h-5 w-5" />
+                                <ArrowRight className="ml-3 h-6 w-6 transition-transform group-hover:translate-x-2" />
                             </Button>
                         </Link>
                         <Link href="/contact">
-                            <Button size="lg" variant="outline" className="h-14 px-8 text-lg">
+                            <Button size="lg" variant="outline" className="h-16 px-10 text-xl font-bold uppercase rounded-none brutal-shadow bg-background hover:bg-muted text-white brutal-border">
                                 Contact Sales
                             </Button>
                         </Link>

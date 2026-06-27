@@ -8,13 +8,14 @@
         "./node.js": "./node.js"
     },
     "dependencies": {
-        "@eslint/compat": "^2.0.1",
-        "@typescript-eslint/eslint-plugin": "^8.17.0",
-        "@typescript-eslint/parser": "^8.17.0",
-        "eslint": "^9.39.2",
-        "eslint-config-next": "^16.0.6",
+        "@eslint/compat": "^2.1.0",
+        "@tailwindcss/postcss": "^4.3.1",
+        "@typescript-eslint/eslint-plugin": "^8.62.0",
+        "@typescript-eslint/parser": "^8.62.0",
+        "eslint": "^9.39.4",
+        "eslint-config-next": "^16.2.9",
         "eslint-config-prettier": "^10.1.8",
-        "eslint-plugin-react": "^7.37.2",
-        "globals": "^15.14.0"
+        "eslint-plugin-react": "^7.37.5",
+        "globals": "^17.7.0"
     }
 }
