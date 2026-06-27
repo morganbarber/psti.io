@@ -13,6 +13,7 @@ describe('PastesController (e2e)', () => {
         findOne: jest.fn(),
         update: jest.fn(),
         remove: jest.fn(),
+        fork: jest.fn(),
     };
 
     beforeEach(async () => {
@@ -100,6 +101,20 @@ describe('PastesController (e2e)', () => {
             .expect({
                 success: true,
                 message: 'Paste deleted successfully',
+            });
+    });
+
+    it('/pastes/:id/fork (POST)', () => {
+        const result = { id: '2', content: 'test content', fork_of: '1' };
+        pastesService.fork.mockResolvedValue(result);
+
+        return request(app.getHttpServer())
+            .post('/pastes/1/fork')
+            .send({ password: 'secret' })
+            .expect(201)
+            .expect({
+                success: true,
+                data: result,
             });
     });
 });

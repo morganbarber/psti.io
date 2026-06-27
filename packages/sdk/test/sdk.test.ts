@@ -70,4 +70,23 @@ describe('PastebinClient', () => {
         );
         expect(result.data).toEqual(mockPaste);
     });
+
+    it('should fork a paste', async () => {
+        const mockPaste = { id: 'new-id', title: 'test (Fork)', content: 'hello' };
+        (global.fetch as jest.Mock).mockResolvedValueOnce({
+            ok: true,
+            json: async () => ({ success: true, data: mockPaste }),
+        });
+
+        const result = await client.pastes.fork('old-id', 'secret');
+
+        expect(global.fetch).toHaveBeenCalledWith(
+            `${mockBaseUrl}/api/v1/pastes/old-id/fork`,
+            expect.objectContaining({
+                method: 'POST',
+                body: JSON.stringify({ password: 'secret' })
+            })
+        );
+        expect(result.data).toEqual(mockPaste);
+    });
 });

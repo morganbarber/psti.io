@@ -60,3 +60,26 @@ def test_auth_request(client):
     
     req = responses.calls[0].request
     assert req.headers["Authorization"] == "Bearer test-token"
+
+@responses.activate
+def test_fork_paste(client):
+    mock_response = {
+        "success": True,
+        "data": {"id": "new-id", "title": "test (Fork)", "content": "hello"}
+    }
+    
+    responses.add(
+        responses.POST,
+        "https://api.example.com/api/v1/pastes/old-id/fork",
+        json=mock_response,
+        status=201
+    )
+    
+    result = client.fork_paste("old-id", "secret")
+    
+    assert result == mock_response
+    assert len(responses.calls) == 1
+    req = responses.calls[0].request
+    import json
+    body = json.loads(req.body)
+    assert body["password"] == "secret"
