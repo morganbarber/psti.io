@@ -1,10 +1,10 @@
 import pytest
 import responses
-from pastebin_sdk import PastebinClient
+from psti_sdk import PstiClient
 
 @pytest.fixture
 def client():
-    return PastebinClient(base_url="https://api.example.com")
+    return PstiClient(base_url="https://api.example.com")
 
 def test_initialization(client):
     assert client.base_url == "https://api.example.com"
@@ -30,7 +30,7 @@ def test_create_paste(client):
         status=201
     )
     
-    result = client.create_paste(
+    result = client.pastes.create(
         title="test",
         content="hello",
         language="plaintext",
@@ -55,7 +55,7 @@ def test_auth_request(client):
         status=200
     )
     
-    result = client.list_pastes()
+    result = client.pastes.list()
     assert result == mock_response
     
     req = responses.calls[0].request
@@ -75,7 +75,7 @@ def test_fork_paste(client):
         status=201
     )
     
-    result = client.fork_paste("old-id", "secret")
+    result = client.pastes.fork("old-id", "secret")
     
     assert result == mock_response
     assert len(responses.calls) == 1
@@ -98,7 +98,7 @@ def test_get_paste_versions(client):
         status=200
     )
     
-    result = client.get_paste_versions("old-id", "secret")
+    result = client.pastes.get_versions("old-id", "secret")
     
     assert result == mock_response
     assert len(responses.calls) == 1

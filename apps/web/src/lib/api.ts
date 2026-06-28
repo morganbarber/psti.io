@@ -1,10 +1,10 @@
-import { PastebinClient } from '@psti/sdk';
+import { PstiClient } from '@psti/sdk';
 import { createClient as createSupabaseClient } from './supabase/client';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
 // Create a singleton instance of the client
-export const apiClient = new PastebinClient({ baseUrl: API_BASE_URL });
+export const apiClient = new PstiClient({ baseUrl: API_BASE_URL });
 
 /**
  * Get the authorization token from Supabase session

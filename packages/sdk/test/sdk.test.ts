@@ -1,16 +1,16 @@
-import { PastebinClient } from '../src';
+import { PstiClient } from '../src';
 import { PasteVisibility } from '@psti/types';
 
 // Mock the global fetch function
 global.fetch = jest.fn();
 
-describe('PastebinClient', () => {
-    let client: PastebinClient;
+describe('PstiClient', () => {
+    let client: PstiClient;
     const mockBaseUrl = 'https://api.example.com';
     const mockToken = 'mock-token';
 
     beforeEach(() => {
-        client = new PastebinClient({ baseUrl: mockBaseUrl });
+        client = new PstiClient({ baseUrl: mockBaseUrl });
         (global.fetch as jest.Mock).mockClear();
     });
 
