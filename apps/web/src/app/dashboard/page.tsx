@@ -7,7 +7,7 @@ import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } fro
 import { Paste } from '@psti/types';
 import { createClient } from '@/lib/supabase/client';
 import { getUserPastes, getPasteAnalytics } from '@/lib/api';
-import { Code2, Plus, LogOut, Loader2, Activity, Globe, Monitor, Smartphone, HardDrive, Compass } from 'lucide-react';
+import { Code2, Plus, LogOut, Loader2, Activity, Globe, Monitor, Smartphone, HardDrive, Compass, Settings } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function DashboardPage() {
@@ -99,6 +99,12 @@ export default function DashboardPage() {
                             <Button size="sm" className="shadow-lg shadow-primary/20 transition-all hover:scale-105">
                                 <Plus className="mr-2 h-4 w-4" />
                                 New Paste
+                            </Button>
+                        </Link>
+                        <Link href="/settings">
+                            <Button variant="ghost" size="sm" className="hover:bg-primary/10 transition-colors">
+                                <Settings className="mr-2 h-4 w-4" />
+                                Settings
                             </Button>
                         </Link>
                         <Button variant="ghost" size="sm" onClick={handleSignOut} className="hover:bg-destructive/10 hover:text-destructive transition-colors">

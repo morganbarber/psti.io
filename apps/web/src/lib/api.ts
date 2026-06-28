@@ -83,3 +83,17 @@ export async function trackPasteView(id: string, data: Parameters<typeof apiClie
 export async function getPasteAnalytics() {
     return withAuth(() => apiClient.pastes.getAnalytics());
 }
+
+/**
+ * Get user profile
+ */
+export async function getUserProfile() {
+    return withAuth(() => apiClient.users.getProfile());
+}
+
+/**
+ * Update user profile
+ */
+export async function updateUserProfile(data: Parameters<typeof apiClient.users.updateProfile>[0]) {
+    return withAuth(() => apiClient.users.updateProfile(data));
+}
