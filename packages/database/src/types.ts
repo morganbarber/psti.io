@@ -127,6 +127,15 @@ export interface Database {
                     viewer_ip: string | null;
                     viewer_user_id: string | null;
                     viewed_at: string;
+                    user_agent: string | null;
+                    referrer: string | null;
+                    browser: string | null;
+                    os: string | null;
+                    device_type: string | null;
+                    country: string | null;
+                    language: string | null;
+                    screen_resolution: string | null;
+                    timezone: string | null;
                 };
                 Insert: {
                     id?: string;
@@ -134,6 +143,15 @@ export interface Database {
                     viewer_ip?: string | null;
                     viewer_user_id?: string | null;
                     viewed_at?: string;
+                    user_agent?: string | null;
+                    referrer?: string | null;
+                    browser?: string | null;
+                    os?: string | null;
+                    device_type?: string | null;
+                    country?: string | null;
+                    language?: string | null;
+                    screen_resolution?: string | null;
+                    timezone?: string | null;
                 };
                 Update: {
                     id?: string;
@@ -141,6 +159,15 @@ export interface Database {
                     viewer_ip?: string | null;
                     viewer_user_id?: string | null;
                     viewed_at?: string;
+                    user_agent?: string | null;
+                    referrer?: string | null;
+                    browser?: string | null;
+                    os?: string | null;
+                    device_type?: string | null;
+                    country?: string | null;
+                    language?: string | null;
+                    screen_resolution?: string | null;
+                    timezone?: string | null;
                 };
             };
             paste_versions: {

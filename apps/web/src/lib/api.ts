@@ -69,3 +69,17 @@ export async function updatePaste(id: string, input: Parameters<typeof apiClient
 export async function deletePaste(id: string) {
     return withAuth(() => apiClient.pastes.delete(id));
 }
+
+/**
+ * Track a paste view
+ */
+export async function trackPasteView(id: string, data: Parameters<typeof apiClient.pastes.trackView>[1]) {
+    return withAuth(() => apiClient.pastes.trackView(id, data));
+}
+
+/**
+ * Get aggregated analytics
+ */
+export async function getPasteAnalytics() {
+    return withAuth(() => apiClient.pastes.getAnalytics());
+}

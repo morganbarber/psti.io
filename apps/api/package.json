@@ -38,7 +38,8 @@
         "dotenv": "^17.4.2",
         "helmet": "^8.2.0",
         "reflect-metadata": "^0.2.2",
-        "rxjs": "^7.8.2"
+        "rxjs": "^7.8.2",
+        "ua-parser-js": "^2.0.10"
     },
     "devDependencies": {
         "@nestjs/cli": "^11.0.23",
@@ -50,6 +51,7 @@
         "@types/jest": "^30.0.0",
         "@types/node": "^26.0.1",
         "@types/supertest": "^7.2.0",
+        "@types/ua-parser-js": "^0.7.39",
         "@typescript-eslint/eslint-plugin": "^8.62.0",
         "@typescript-eslint/parser": "^8.62.0",
         "eslint": "^9.39.4",

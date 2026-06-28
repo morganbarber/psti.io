@@ -8,7 +8,9 @@ import {
     Delete,
     UseGuards,
     Query,
+    Req,
 } from '@nestjs/common';
+import { Request } from 'express';
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { PastesService } from './pastes.service';
@@ -45,6 +47,18 @@ export class PastesController {
         };
     }
 
+    @Get('analytics/aggregate')
+    @UseGuards(AuthGuard)
+    @ApiBearerAuth()
+    @ApiOperation({ summary: 'Get aggregated analytics for all pastes' })
+    async getAnalytics(@CurrentUser() user: any) {
+        const analytics = await this.pastesService.getAnalytics(user.id);
+        return {
+            success: true,
+            data: analytics,
+        };
+    }
+
     @Get(':id')
     @ApiOperation({ summary: 'Get a paste by ID' })
     async findOne(@Param('id') id: string, @Query('password') password?: string) {
@@ -63,6 +77,26 @@ export class PastesController {
             success: true,
             data: versions,
         };
+    }
+
+    @Post(':id/views')
+    @UseGuards(OptionalAuthGuard)
+    @ApiOperation({ summary: 'Track a paste view with detailed analytics' })
+    async trackView(
+        @Param('id') id: string,
+        @Body() body: any,
+        @Req() req: Request,
+        @CurrentUser() user?: any
+    ) {
+        const ip = req.ip || req.socket?.remoteAddress || '';
+        const userAgent = req.headers['user-agent'] || '';
+        
+        await this.pastesService.trackView(id, ip, userAgent, {
+            ...body,
+            viewer_user_id: user?.id,
+        });
+
+        return { success: true };
     }
 
     @Post(':id/fork')

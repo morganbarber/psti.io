@@ -140,6 +140,25 @@ export class PastebinClient {
                 method: 'DELETE',
             });
         },
+
+        /**
+         * Track a view on a paste
+         */
+        trackView: (id: string, data: { referrer?: string; language?: string; screen_resolution?: string; timezone?: string }): Promise<ApiResponse<{ success: true }>> => {
+            return this.request<{ success: true }>(`/api/v1/pastes/${id}/views`, {
+                method: 'POST',
+                body: JSON.stringify(data),
+            });
+        },
+
+        /**
+         * Get aggregated analytics for all pastes
+         */
+        getAnalytics: (): Promise<ApiResponse<any>> => {
+            return this.request<any>('/api/v1/pastes/analytics/aggregate', {
+                method: 'GET',
+            });
+        },
     };
 
     public users = {

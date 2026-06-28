@@ -53,7 +53,16 @@ CREATE TABLE IF NOT EXISTS public.paste_views (
   paste_id UUID NOT NULL REFERENCES public.pastes(id) ON DELETE CASCADE,
   viewer_ip TEXT,
   viewer_user_id UUID REFERENCES public.users(id) ON DELETE SET NULL,
-  viewed_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  viewed_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  user_agent TEXT,
+  referrer TEXT,
+  browser TEXT,
+  os TEXT,
+  device_type TEXT,
+  country TEXT,
+  language TEXT,
+  screen_resolution TEXT,
+  timezone TEXT
 );
 
 -- Paste versions table
@@ -78,6 +87,10 @@ CREATE INDEX IF NOT EXISTS idx_pastes_expires_at ON public.pastes(expires_at) WH
 CREATE INDEX IF NOT EXISTS idx_pastes_folder_id ON public.pastes(folder_id);
 CREATE INDEX IF NOT EXISTS idx_folders_user_id ON public.folders(user_id);
 CREATE INDEX IF NOT EXISTS idx_paste_views_paste_id ON public.paste_views(paste_id);
+CREATE INDEX IF NOT EXISTS idx_paste_views_browser ON public.paste_views(browser);
+CREATE INDEX IF NOT EXISTS idx_paste_views_os ON public.paste_views(os);
+CREATE INDEX IF NOT EXISTS idx_paste_views_device_type ON public.paste_views(device_type);
+CREATE INDEX IF NOT EXISTS idx_paste_views_viewed_at ON public.paste_views(viewed_at DESC);
 CREATE INDEX IF NOT EXISTS idx_paste_versions_paste_id ON public.paste_versions(paste_id);
 CREATE INDEX IF NOT EXISTS idx_paste_versions_created_at ON public.paste_versions(created_at DESC);
 

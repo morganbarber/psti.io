@@ -12,7 +12,7 @@ import {
     CardHeader,
     CardTitle,
 } from '@psti/ui';
-import { getPaste, getPasteVersions } from '@/lib/api';
+import { getPaste, getPasteVersions, trackPasteView } from '@/lib/api';
 import { decryptContent } from '@psti/security';
 import { PasteVersion } from '@psti/types';
 import { Code2, Lock, Eye, Calendar, Flame, ArrowLeft, AlertTriangle, History } from 'lucide-react';
@@ -90,6 +90,14 @@ export default function PasteViewPage({ params }: PasteViewProps) {
                 if (versionsRes.success && versionsRes.data) {
                     setVersions(versionsRes.data);
                 }
+
+                // Track view analytics in background
+                trackPasteView(id, {
+                    referrer: document.referrer,
+                    language: navigator.language,
+                    screen_resolution: `${window.screen.width}x${window.screen.height}`,
+                    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                }).catch(e => console.error('Failed to track view', e));
             }
         } catch (err: any) {
             setError(err.message || 'Failed to load paste');

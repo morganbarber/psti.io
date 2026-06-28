@@ -3,6 +3,7 @@ import { createServiceClient, type Database } from '@psti/database';
 import { encrypt, decrypt, hashPassword, verifyPassword } from '@psti/security';
 import { CreatePasteInput, UpdatePasteInput } from '@psti/validation';
 import { EXPIRATION_DURATIONS } from '@psti/config';
+import { UAParser } from 'ua-parser-js';
 
 @Injectable()
 export class PastesService {
@@ -249,5 +250,119 @@ export class PastesService {
 
         // 3. Create the new paste
         return this.create(userId, createDto);
+    }
+
+    async trackView(
+        id: string,
+        ip: string,
+        userAgent: string,
+        clientData: {
+            referrer?: string;
+            language?: string;
+            screen_resolution?: string;
+            timezone?: string;
+            viewer_user_id?: string;
+        }
+    ) {
+        // Parse user agent
+        const parser = new UAParser(userAgent);
+        const browser = parser.getBrowser();
+        const os = parser.getOS();
+        const device = parser.getDevice();
+
+        const { error } = await (this.supabase as any).from('paste_views').insert({
+            paste_id: id,
+            viewer_ip: ip,
+            viewer_user_id: clientData.viewer_user_id || null,
+            user_agent: userAgent,
+            referrer: clientData.referrer,
+            browser: browser.name,
+            os: os.name,
+            device_type: device.type || 'desktop', // fallback to desktop if undefined
+            language: clientData.language,
+            screen_resolution: clientData.screen_resolution,
+            timezone: clientData.timezone,
+            // country could be populated if we have a way to resolve IP to geo, but we'll leave it out for now
+        });
+
+        if (error) {
+            console.error('Error tracking view:', error);
+            // Non-critical, so we don't necessarily throw
+        }
+    }
+
+    async getAnalytics(userId: string) {
+        // Fetch all pastes for this user
+        const { data: pastes, error: pastesError } = await (this.supabase as any)
+            .from('pastes')
+            .select('id')
+            .eq('user_id', userId);
+
+        if (pastesError) {
+            throw new Error(pastesError.message);
+        }
+
+        const pasteIds = pastes.map(p => p.id);
+        if (pasteIds.length === 0) {
+            return {
+                browsers: [],
+                os: [],
+                devices: [],
+                referrers: [],
+                totalViews: 0
+            };
+        }
+
+        // Fetch all views for these pastes
+        const { data, error: viewsError } = await (this.supabase as any)
+            .from('paste_views')
+            .select('*')
+            .in('paste_id', pasteIds);
+
+        if (viewsError) {
+            throw new Error(viewsError.message);
+        }
+
+        const views = data as any[];
+
+        // Aggregate data
+        const browsers: Record<string, number> = {};
+        const os: Record<string, number> = {};
+        const devices: Record<string, number> = {};
+        const referrers: Record<string, number> = {};
+
+        views.forEach(view => {
+            if (view.browser) browsers[view.browser] = (browsers[view.browser] || 0) + 1;
+            if (view.os) os[view.os] = (os[view.os] || 0) + 1;
+            if (view.device_type) devices[view.device_type] = (devices[view.device_type] || 0) + 1;
+            if (view.referrer) {
+                try {
+                    const url = new URL(view.referrer);
+                    const host = url.hostname;
+                    referrers[host] = (referrers[host] || 0) + 1;
+                } catch (e) {
+                    // Invalid URL or empty, maybe store raw
+                    if (view.referrer.length > 0) {
+                        referrers[view.referrer] = (referrers[view.referrer] || 0) + 1;
+                    }
+                }
+            } else {
+                referrers['Direct'] = (referrers['Direct'] || 0) + 1;
+            }
+        });
+
+        const sortObject = (obj: Record<string, number>) => {
+            return Object.entries(obj)
+                .sort((a, b) => b[1] - a[1])
+                .map(([name, count]) => ({ name, count }));
+        };
+
+        return {
+            browsers: sortObject(browsers),
+            os: sortObject(os),
+            devices: sortObject(devices),
+            referrers: sortObject(referrers),
+            totalViews: views.length
+        };
     }
 }
