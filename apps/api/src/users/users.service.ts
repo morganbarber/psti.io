@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { createServiceClient, type Database } from '@psti/database';
 
 @Injectable()
@@ -29,7 +29,7 @@ export class UsersService {
             .single();
 
         if (error) {
-            throw new Error(error.message);
+            throw new InternalServerErrorException(error.message);
         }
 
         return data;

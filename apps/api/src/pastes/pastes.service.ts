@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException, InternalServerErrorException } from '@nestjs/common';
 import { createServiceClient, type Database } from '@psti/database';
 import { encrypt, decrypt, hashPassword, verifyPassword } from '@psti/security';
 import { CreatePasteInput, UpdatePasteInput } from '@psti/validation';
@@ -59,7 +59,7 @@ export class PastesService {
             .single();
 
         if (error) {
-            throw new Error(error.message);
+            throw new InternalServerErrorException(error.message);
         }
 
         return data;
@@ -132,7 +132,7 @@ export class PastesService {
 
     async findVersions(id: string, password?: string) {
         // First verify access to the parent paste
-        const paste = await this.verifyAccess(id, password);
+        await this.verifyAccess(id, password);
 
         const { data, error } = await (this.supabase
             .from('paste_versions')
@@ -141,7 +141,7 @@ export class PastesService {
             .order('created_at', { ascending: false }) as any);
 
         if (error) {
-            throw new Error(error.message);
+            throw new InternalServerErrorException(error.message);
         }
 
         // Decrypt versions if needed
@@ -158,9 +158,9 @@ export class PastesService {
                         password
                     );
                     version.content = decrypted;
-                } catch (e) {
+                } catch (error) {
                     // Ignore decryption failure for versions (might have used a different key)
-                    console.error('Failed to decrypt version', version.id);
+                    console.error('Failed to decrypt version', version.id, error);
                 }
             }
             return version;
@@ -175,7 +175,7 @@ export class PastesService {
             .order('created_at', { ascending: false });
 
         if (error) {
-            throw new Error(error.message);
+            throw new InternalServerErrorException(error.message);
         }
 
         return data;
@@ -202,7 +202,7 @@ export class PastesService {
             .single();
 
         if (error) {
-            throw new Error(error.message);
+            throw new InternalServerErrorException(error.message);
         }
 
         return data;
@@ -223,7 +223,7 @@ export class PastesService {
         const { error } = await this.supabase.from('pastes').delete().eq('id', id);
 
         if (error) {
-            throw new Error(error.message);
+            throw new InternalServerErrorException(error.message);
         }
 
         return { success: true };
@@ -299,7 +299,7 @@ export class PastesService {
             .eq('user_id', userId);
 
         if (pastesError) {
-            throw new Error(pastesError.message);
+            throw new InternalServerErrorException(pastesError.message);
         }
 
         const pasteIds = pastes.map(p => p.id);
@@ -320,7 +320,7 @@ export class PastesService {
             .in('paste_id', pasteIds);
 
         if (viewsError) {
-            throw new Error(viewsError.message);
+            throw new InternalServerErrorException(viewsError.message);
         }
 
         const views = data as any[];
@@ -340,7 +340,7 @@ export class PastesService {
                     const url = new URL(view.referrer);
                     const host = url.hostname;
                     referrers[host] = (referrers[host] || 0) + 1;
-                } catch (e) {
+                } catch {
                     // Invalid URL or empty, maybe store raw
                     if (view.referrer.length > 0) {
                         referrers[view.referrer] = (referrers[view.referrer] || 0) + 1;
