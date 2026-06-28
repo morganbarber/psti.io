@@ -65,18 +65,12 @@ export class PastesService {
         return data;
     }
 
-    private async verifyAccess(id: string, password?: string) {
-        const { data, error } = await this.supabase
-            .from('pastes')
-            .select('*')
-            .eq('id', id)
-            .single();
-
-        if (error || !data) {
+    private verifyAccessData(data: any, password?: string) {
+        if (!data) {
             throw new NotFoundException('Paste not found');
         }
 
-        const paste = { ...(data as Database['public']['Tables']['pastes']['Row']) };
+        const paste = { ...data } as Database['public']['Tables']['pastes']['Row'];
 
         // Check if expired
         if (paste.expires_at && new Date(paste.expires_at) < new Date()) {
@@ -99,7 +93,17 @@ export class PastesService {
     }
 
     async findOne(id: string, password?: string) {
-        const paste = await this.verifyAccess(id, password);
+        const { data, error } = await this.supabase
+            .from('pastes')
+            .select('*')
+            .eq('id', id)
+            .single();
+
+        if (error || !data) {
+            throw new NotFoundException('Paste not found');
+        }
+
+        const paste = this.verifyAccessData(data, password);
 
         // Decrypt content if encrypted AND we have server-side encryption data
         if (paste.encrypted && password && paste.encryption_iv) {
@@ -116,11 +120,7 @@ export class PastesService {
         }
 
         // Increment view count
-        await this.supabase
-            .from('pastes')
-            // @ts-expect-error - Supabase type inference issue with update method
-            .update({ view_count: paste.view_count + 1 })
-            .eq('id', id);
+        await (this.supabase as any).rpc('increment_paste_view', { p_id: id });
 
         // Handle burn after read
         if (paste.burn_after_read) {
@@ -131,21 +131,27 @@ export class PastesService {
     }
 
     async findVersions(id: string, password?: string) {
-        // First verify access to the parent paste
-        await this.verifyAccess(id, password);
+        // Fetch paste and its versions in a single query
+        const { data: pasteData, error } = await (this.supabase as any)
+            .from('pastes')
+            .select('*, paste_versions(*)')
+            .eq('id', id)
+            .single();
 
-        const { data, error } = await (this.supabase
-            .from('paste_versions')
-            .select('*')
-            .eq('paste_id', id)
-            .order('created_at', { ascending: false }) as any);
-
-        if (error) {
-            throw new InternalServerErrorException(error.message);
+        if (error || !pasteData) {
+            throw new NotFoundException('Paste not found');
         }
 
+        // Verify access to the parent paste
+        this.verifyAccessData(pasteData, password);
+
+        // Sort versions descending
+        const data = (pasteData.paste_versions || []).sort((a: any, b: any) => 
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        );
+
         // Decrypt versions if needed
-        return data.map((version) => {
+        return data.map((version: any) => {
             if (version.encrypted && password && version.encryption_iv) {
                 try {
                     const decrypted = decrypt(
@@ -292,77 +298,13 @@ export class PastesService {
     }
 
     async getAnalytics(userId: string) {
-        // Fetch all pastes for this user
-        const { data: pastes, error: pastesError } = await (this.supabase as any)
-            .from('pastes')
-            .select('id')
-            .eq('user_id', userId);
+        const { data, error } = await (this.supabase as any)
+            .rpc('get_user_analytics', { p_user_id: userId });
 
-        if (pastesError) {
-            throw new InternalServerErrorException(pastesError.message);
+        if (error) {
+            throw new InternalServerErrorException(error.message);
         }
 
-        const pasteIds = pastes.map(p => p.id);
-        if (pasteIds.length === 0) {
-            return {
-                browsers: [],
-                os: [],
-                devices: [],
-                referrers: [],
-                totalViews: 0
-            };
-        }
-
-        // Fetch all views for these pastes
-        const { data, error: viewsError } = await (this.supabase as any)
-            .from('paste_views')
-            .select('*')
-            .in('paste_id', pasteIds);
-
-        if (viewsError) {
-            throw new InternalServerErrorException(viewsError.message);
-        }
-
-        const views = data as any[];
-
-        // Aggregate data
-        const browsers: Record<string, number> = {};
-        const os: Record<string, number> = {};
-        const devices: Record<string, number> = {};
-        const referrers: Record<string, number> = {};
-
-        views.forEach(view => {
-            if (view.browser) browsers[view.browser] = (browsers[view.browser] || 0) + 1;
-            if (view.os) os[view.os] = (os[view.os] || 0) + 1;
-            if (view.device_type) devices[view.device_type] = (devices[view.device_type] || 0) + 1;
-            if (view.referrer) {
-                try {
-                    const url = new URL(view.referrer);
-                    const host = url.hostname;
-                    referrers[host] = (referrers[host] || 0) + 1;
-                } catch {
-                    // Invalid URL or empty, maybe store raw
-                    if (view.referrer.length > 0) {
-                        referrers[view.referrer] = (referrers[view.referrer] || 0) + 1;
-                    }
-                }
-            } else {
-                referrers['Direct'] = (referrers['Direct'] || 0) + 1;
-            }
-        });
-
-        const sortObject = (obj: Record<string, number>) => {
-            return Object.entries(obj)
-                .sort((a, b) => b[1] - a[1])
-                .map(([name, count]) => ({ name, count }));
-        };
-
-        return {
-            browsers: sortObject(browsers),
-            os: sortObject(os),
-            devices: sortObject(devices),
-            referrers: sortObject(referrers),
-            totalViews: views.length
-        };
+        return data;
     }
 }
