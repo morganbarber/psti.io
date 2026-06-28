@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, use } from 'react';
+import { useState, useEffect, use, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import {
@@ -37,8 +37,9 @@ export default function PasteViewPage({ params }: PasteViewProps) {
     const [passwordError, setPasswordError] = useState('');
     const [decryptionError, setDecryptionError] = useState('');
     const [isDecrypting, setIsDecrypting] = useState(false);
+    const hasTrackedView = useRef(false);
 
-    const loadPaste = async (pwd?: string) => {
+    const loadPaste = useCallback(async (pwd?: string) => {
         try {
             setLoading(true);
             setPasswordError('');
@@ -92,28 +93,57 @@ export default function PasteViewPage({ params }: PasteViewProps) {
                 }
 
                 // Track view analytics in background
-                trackPasteView(id, {
-                    referrer: document.referrer,
-                    language: navigator.language,
-                    screen_resolution: `${window.screen.width}x${window.screen.height}`,
-                    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-                }).catch(e => console.error('Failed to track view', e));
+                if (!hasTrackedView.current) {
+                    hasTrackedView.current = true;
+                    trackPasteView(id, {
+                        referrer: document.referrer,
+                        language: navigator.language,
+                        screen_resolution: `${window.screen.width}x${window.screen.height}`,
+                        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                    }).catch(e => console.error('Failed to track view', e));
+                }
             }
         } catch (err: any) {
             setError(err.message || 'Failed to load paste');
         } finally {
             setLoading(false);
         }
-    };
+    }, [id]);
 
     useEffect(() => {
         loadPaste();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [id]);
+    }, [loadPaste]);
 
     const handlePasswordSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         loadPaste(password);
+    };
+
+    const handleFork = () => {
+        let url = `/paste/new?fork_of=${paste.id}`;
+        if (password) url += `&password=${encodeURIComponent(password)}`;
+        if (window.location.hash) url += window.location.hash;
+        window.location.href = url;
+    };
+
+    const handleCopy = () => {
+        const currentContent = selectedVersionId 
+            ? versions.find(v => v.id === selectedVersionId)?.content || paste.content
+            : paste.content;
+        navigator.clipboard.writeText(currentContent);
+    };
+
+    const handleDownload = () => {
+        const current = selectedVersionId 
+            ? versions.find(v => v.id === selectedVersionId) || paste
+            : paste;
+        const blob = new Blob([current.content], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${current.title}.${current.language}`;
+        a.click();
+        URL.revokeObjectURL(url);
     };
 
     if (loading && !requiresPassword) {
@@ -293,35 +323,20 @@ export default function PasteViewPage({ params }: PasteViewProps) {
                                 )}
                                 <Button
                                     variant="outline"
-                                    onClick={() => {
-                                        let url = `/paste/new?fork_of=${paste.id}`;
-                                        if (password) url += `&password=${encodeURIComponent(password)}`;
-                                        if (window.location.hash) url += window.location.hash;
-                                        window.location.href = url;
-                                    }}
+                                    onClick={handleFork}
                                 >
                                     Fork
                                 </Button>
                                 <Button
                                     variant="outline"
-                                    onClick={() => {
-                                        navigator.clipboard.writeText(currentDisplayPaste.content);
-                                    }}
+                                    onClick={handleCopy}
                                     disabled={!!decryptionError}
                                 >
                                     Copy
                                 </Button>
                                 <Button
                                     variant="outline"
-                                    onClick={() => {
-                                        const blob = new Blob([currentDisplayPaste.content], { type: 'text/plain' });
-                                        const url = URL.createObjectURL(blob);
-                                        const a = document.createElement('a');
-                                        a.href = url;
-                                        a.download = `${currentDisplayPaste.title}.${currentDisplayPaste.language}`;
-                                        a.click();
-                                        URL.revokeObjectURL(url);
-                                    }}
+                                    onClick={handleDownload}
                                     disabled={!!decryptionError}
                                 >
                                     Download
