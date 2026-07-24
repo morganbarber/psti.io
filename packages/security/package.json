@@ -11,7 +11,7 @@
     "dependencies": {
         "@psti/config": "*",
         "@tailwindcss/postcss": "^4.3.1",
-        "dompurify": "^3.4.11",
+        "dompurify": "^3.4.12",
         "isomorphic-dompurify": "^3.18.0"
     },
     "devDependencies": {
